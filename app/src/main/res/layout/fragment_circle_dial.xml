@@ -5,6 +5,7 @@
 
     <!-- TODO: Update blank fragment layout -->
     <com.diallock.diallock.diallock.Activity.Layout.CircleLayout
+        android:id="@+id/circle_screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

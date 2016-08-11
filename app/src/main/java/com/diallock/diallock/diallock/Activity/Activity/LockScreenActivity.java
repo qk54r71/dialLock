@@ -1,70 +1,60 @@
 package com.diallock.diallock.diallock.Activity.Activity;
 
-import android.gesture.Gesture;
-import android.gesture.GestureOverlayView;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
 
 public class LockScreenActivity extends AppCompatActivity {
 
-    private GestureDetector mGestureDetector;
+    private CircleLayout circleLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock_screen);
 
+        setFindView();
+
         CommonJava.Loging.i("LockScreenActivity", "onCreate()");
-        mGestureDetector = new GestureDetector(getBaseContext(), new GestureDetector.OnGestureListener() {
-            @Override
-            public boolean onDown(MotionEvent motionEvent) {
-                CommonJava.Loging.i("LockScreenActivity", "onDown MotionEvent : " + motionEvent);
 
-                return false;
-            }
+    }
 
-            @Override
-            public void onShowPress(MotionEvent motionEvent) {
-                CommonJava.Loging.i("LockScreenActivity", "onShowPress MotionEvent : " + motionEvent);
-
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent motionEvent) {
-                CommonJava.Loging.i("LockScreenActivity", "onSingleTapUp MotionEvent : " + motionEvent);
-                return false;
-            }
-
-            @Override
-            public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-                CommonJava.Loging.i("LockScreenActivity", "onScroll MotionEvent : " + motionEvent);
-                return false;
-            }
-
-            @Override
-            public void onLongPress(MotionEvent motionEvent) {
-                CommonJava.Loging.i("LockScreenActivity", "onLongPress MotionEvent : " + motionEvent);
-
-            }
-
-            @Override
-            public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-                CommonJava.Loging.i("LockScreenActivity", "onFling MotionEvent : " + motionEvent);
-                return false;
-            }
-
-        });
-
-
+    private void setFindView() {
+        circleLayout = (CircleLayout) findViewById(R.id.circle_screen);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event);
+
+        //CommonJava.Loging.i("LockScreenActivity", "onTouchEvent : " + event);
+
+        float xLocation = event.getX(0);
+        float yLocation = event.getY(0);
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+
+                circleLayout.screenTouchLocationStart(xLocation, yLocation);
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                circleLayout.screenTouchLocationDrag(xLocation, yLocation);
+                break;
+            case MotionEvent.ACTION_UP:
+
+                circleLayout.screenTouchLocationEnd(xLocation, yLocation);
+                break;
+        }
+
+        return super.onTouchEvent(event);
     }
 }
