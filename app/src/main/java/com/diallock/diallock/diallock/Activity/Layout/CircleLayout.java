@@ -18,6 +18,7 @@ import com.diallock.diallock.diallock.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Queue;
 
 /**
  * Created by park on 2016-08-09.
@@ -40,8 +41,7 @@ public class CircleLayout extends View {
 
     private ArrayList<Bitmap> mIcon = new ArrayList<Bitmap>();
     private ArrayList<Bitmap> mIconClick = new ArrayList<Bitmap>();
-    private int mRandomImgFrist;
-    private int mRandomImgSecond;
+
     private int[] mArcIconIdRandom = {
             R.drawable.num_0, R.drawable.num_1, R.drawable.num_2,
             R.drawable.num_3, R.drawable.num_4, R.drawable.num_5,
@@ -61,8 +61,25 @@ public class CircleLayout extends View {
     BitmapImage mBigArcLocation = new BitmapImage();
     BitmapImage mSmallArcLocation = new BitmapImage();
 
-    private final int BIG_CIRCLE = 12;
-    private final int SMALL_CIRCLE = 13;
+    /**
+     * 다이얼락의 눌린 정보를 기록 하는 클래스
+     */
+    DialImageInfo mDialImageInfo = new DialImageInfo();
+
+    /**
+     * 비어있다는 뜻의 상수
+     */
+    private final int NUM_NULL = 99;
+
+    /**
+     * 다이얼 락 잠금 해제 스타트를 구분하기 위한 변수
+     */
+    private Boolean mStartDial;
+
+    /**
+     * 현재 드래그 하고 있는 숫자의 인덱스
+     */
+    private int mDragIndex = NUM_NULL;
 
     public CircleLayout(Context context) {
         this(context, null);
@@ -160,11 +177,26 @@ public class CircleLayout extends View {
 
             int centerX = (int) ((mOuterRadius + mInnerRadius) / 2 * Math.cos(Math.toRadians(startAngle + mSweepAngle / 2)));
             int centerY = (int) ((mOuterRadius + mInnerRadius) / 2 * Math.sin(Math.toRadians(startAngle + mSweepAngle / 2)));
-            canvas.drawBitmap(mBitmapImages.get(i).getApplyImage(), width / 2 + centerX - mBitmapImages.get(i).getApplyImage().getWidth() / 2, height / 2 + centerY - mBitmapImages.get(i).getApplyImage().getHeight() / 2, null);
+
+            /**
+             * 현재 눌려진 위치 찾아서 클릭 이미지로 변경
+             */
+            Bitmap bitmapClickImage = null;
+            if (mDialImageInfo.getCurrentClickBitmapImageIndex() == i) {
+                bitmapClickImage = mBitmapImages.get(i).getNumClick();
+            } else if (mDialImageInfo.getPreClickBitmapImageIndex() == i) {
+                bitmapClickImage = mBitmapImages.get(i).getNumClick();
+            } else if (mDialImageInfo.getPrePreClickBitmapImageIndex() == i) {
+                bitmapClickImage = mBitmapImages.get(i).getNumClick();
+            } else {
+                bitmapClickImage = mBitmapImages.get(i).getNum();
+            }
+
+            canvas.drawBitmap(bitmapClickImage, width / 2 + centerX - bitmapClickImage.getWidth() / 2, height / 2 + centerY - bitmapClickImage.getHeight() / 2, null);
 
             float bitmapImgX = width / 2 + centerX;
             float bitmapImgY = height / 2 + centerY + parentLinearHeight / 2;
-            int bitmapRadius = mBitmapImages.get(i).getApplyImage().getWidth() / 2;
+            int bitmapRadius = bitmapClickImage.getWidth() / 2;
 
 
             mBitmapImages.get(i).setxLocation(bitmapImgX);
@@ -207,11 +239,16 @@ public class CircleLayout extends View {
         CommonJava.Loging.i("CircleLayout", "yLocation : " + yLocation);
 
         Boolean isDialInner = isDialInner(xLocation, yLocation);
+        mStartDial = false;
 
         if (isDialInner) {
-            Boolean isImageInner = isImageInner(xLocation, yLocation);
-            if (isImageInner) {
-                // Collections.shuffle(mBitmapImages);
+            int isImageInnerIndex = isImageInner(xLocation, yLocation);
+            if (isImageInnerIndex != NUM_NULL) {
+
+                CommonJava.Loging.i("CircleLayout", "screenTouchLocationStart Event start isImageInnerIndex : " + isImageInnerIndex);
+                mStartDial = true;
+                mDialImageInfo.setCurrentClickBitmapImageIndex(isImageInnerIndex);
+                //bitmapImageListShuffle();
                 invalidate();
             }
         }
@@ -225,8 +262,30 @@ public class CircleLayout extends View {
      */
     public void screenTouchLocationDrag(float xLocation, float yLocation) {
 
-        CommonJava.Loging.i("CircleLayout", "xLocation : " + xLocation);
-        CommonJava.Loging.i("CircleLayout", "yLocation : " + yLocation);
+        CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag xLocation : " + xLocation);
+        CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag yLocation : " + yLocation);
+        if (mStartDial) {
+            Boolean isDialInner = isDialInner(xLocation, yLocation);
+
+            if (isDialInner) {
+                int isImageInnerIndex = isImageInner(xLocation, yLocation);
+
+                if (isImageInnerIndex != NUM_NULL && mDragIndex != isImageInnerIndex) {
+
+                    CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag Event start isImageInnerIndex : " + isImageInnerIndex);
+
+                    mDialImageInfo.setCurrentClickBitmapImageIndex(isImageInnerIndex);
+
+                    mStartDial = true;
+                    mDragIndex = isImageInnerIndex;
+                    //bitmapImageListShuffle();
+                    invalidate();
+                }
+            } else {
+                mStartDial = false;
+                mDragIndex = NUM_NULL;
+            }
+        }
     }
 
     /**
@@ -239,13 +298,6 @@ public class CircleLayout extends View {
 
         CommonJava.Loging.i("CircleLayout", "xLocation : " + xLocation);
         CommonJava.Loging.i("CircleLayout", "yLocation : " + yLocation);
-
-        Boolean isDialInner = isDialInner(xLocation, yLocation);
-
-        if (isDialInner) {
-            bitmapImageListShuffle();
-            invalidate();
-        }
     }
 
     /**
@@ -254,11 +306,11 @@ public class CircleLayout extends View {
     private class BitmapImage {
         private Bitmap num;
         private Bitmap numClick;
-        private Bitmap applyImage;
         private String bitmapValue;
         private float xLocation;
         private float yLocation;
         private int imgRadius;
+        private String bitmapID;
 
         public Bitmap getNum() {
             return num;
@@ -266,7 +318,6 @@ public class CircleLayout extends View {
 
         public void setNum(Bitmap num) {
             this.num = num;
-            this.applyImage = num;
         }
 
         public Bitmap getNumClick() {
@@ -277,16 +328,12 @@ public class CircleLayout extends View {
             this.numClick = numClick;
         }
 
-        public Bitmap getApplyImage() {
-            return applyImage;
+        public String getBitmapID() {
+            return bitmapID;
         }
 
-        public void isClickState(Boolean clickBoolean) {
-            if (clickBoolean) {
-                this.applyImage = numClick;
-            } else {
-                this.applyImage = num;
-            }
+        public void setBitmapID(String bitmapID) {
+            this.bitmapID = bitmapID;
         }
 
         public String getBitmapValue() {
@@ -319,6 +366,58 @@ public class CircleLayout extends View {
 
         public void setImgRadius(int imgRadius) {
             this.imgRadius = imgRadius;
+        }
+    }
+
+    /**
+     * 현재 눌려진 이미지의 정보를 갖음
+     * 총 3개의 눌려진 정보를 갖음
+     */
+    private class DialImageInfo {
+        private int currentClickBitmapImageIndex = NUM_NULL;
+        private int preClickBitmapImageIndex = NUM_NULL;
+        private int prePreClickBitmapImageIndex = NUM_NULL;
+
+        public void initDialImageInfo() {
+            this.currentClickBitmapImageIndex = NUM_NULL;
+            this.preClickBitmapImageIndex = NUM_NULL;
+            this.prePreClickBitmapImageIndex = NUM_NULL;
+        }
+
+        public int getCurrentClickBitmapImageIndex() {
+
+            return currentClickBitmapImageIndex;
+        }
+
+        public void setCurrentClickBitmapImageIndex(int currentClickBitmapImageIndex) {
+
+            if (this.currentClickBitmapImageIndex != NUM_NULL) {
+
+                if (this.preClickBitmapImageIndex != NUM_NULL) {
+                    this.prePreClickBitmapImageIndex = this.preClickBitmapImageIndex;
+                }
+
+                this.preClickBitmapImageIndex = this.currentClickBitmapImageIndex;
+            }
+
+            this.currentClickBitmapImageIndex = currentClickBitmapImageIndex;
+
+        }
+
+        public int getPreClickBitmapImageIndex() {
+            return preClickBitmapImageIndex;
+        }
+
+        public void setPreClickBitmapImageIndex(int preClickBitmapImageIndex) {
+            this.preClickBitmapImageIndex = preClickBitmapImageIndex;
+        }
+
+        public int getPrePreClickBitmapImageIndex() {
+            return prePreClickBitmapImageIndex;
+        }
+
+        public void setPrePreClickBitmapImageIndex(int prePreClickBitmapImageIndex) {
+            this.prePreClickBitmapImageIndex = prePreClickBitmapImageIndex;
         }
     }
 
@@ -381,7 +480,7 @@ public class CircleLayout extends View {
      * @param yTouch
      * @return
      */
-    private Boolean isImageInner(float xTouch, float yTouch) {
+    private int isImageInner(float xTouch, float yTouch) {
 
         for (int i = 0; i < mBitmapImages.size(); i++) {
             Boolean isClick = isInnerLocation(
@@ -390,12 +489,10 @@ public class CircleLayout extends View {
                     mBitmapImages.get(i).getImgRadius()
             );
             if (isClick) {
-                mBitmapImages.get(i).isClickState(true);
-                return true;
-            } else {
+                return i;
             }
         }
-        return false;
+        return NUM_NULL;
     }
 
     /**
@@ -411,8 +508,10 @@ public class CircleLayout extends View {
             randomSecondIndex = (int) (Math.random() * 9);
         } while (randomFirstIndex == randomSecondIndex);
 
-        mRandomImgFrist = mArcIconIdRandom[randomFirstIndex];
-        mRandomImgSecond = mArcIconIdRandom[randomSecondIndex];
+        int randomImgFirst = mArcIconIdRandom[randomFirstIndex];
+        int randomImgSecond = mArcIconIdRandom[randomSecondIndex];
+        int randomImgClickFirst = mArcIconClickIdRandom[randomFirstIndex];
+        int randomImgClickSecond = mArcIconClickIdRandom[randomSecondIndex];
 
         if (mIcon.size() == 0) {
             for (int arcIconId : mArcIconIdRandom) {
@@ -423,10 +522,10 @@ public class CircleLayout extends View {
                 mIconClick.add(BitmapFactory.decodeResource(getResources(), arcIconId));
             }
 
-            mIcon.add(BitmapFactory.decodeResource(getResources(), mRandomImgFrist));
-            mIcon.add(BitmapFactory.decodeResource(getResources(), mRandomImgSecond));
-            mIconClick.add(BitmapFactory.decodeResource(getResources(), mRandomImgFrist));
-            mIconClick.add(BitmapFactory.decodeResource(getResources(), mRandomImgSecond));
+            mIcon.add(BitmapFactory.decodeResource(getResources(), randomImgFirst));
+            mIcon.add(BitmapFactory.decodeResource(getResources(), randomImgSecond));
+            mIconClick.add(BitmapFactory.decodeResource(getResources(), randomImgClickFirst));
+            mIconClick.add(BitmapFactory.decodeResource(getResources(), randomImgClickSecond));
 
             mResizeIcon = resizeBitmap(mIcon);
             mResizeIconClick = resizeBitmap(mIconClick);
@@ -438,7 +537,15 @@ public class CircleLayout extends View {
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.setNum(mResizeIcon.get(i));
             bitmapImage.setNumClick(mResizeIconClick.get(i));
-            bitmapImage.setBitmapValue("" + i);
+            bitmapImage.setBitmapID("" + i);
+
+            if (i < 10) {
+                bitmapImage.setBitmapValue("" + i);
+            } else if (i == 10) {
+                bitmapImage.setBitmapValue("" + randomFirstIndex);
+            } else if (i == 11) {
+                bitmapImage.setBitmapValue("" + randomSecondIndex);
+            }
 
             mBitmapImages.add(bitmapImage);
         }
@@ -457,8 +564,10 @@ public class CircleLayout extends View {
             randomSecondIndex = (int) (Math.random() * 9);
         } while (randomFirstIndex == randomSecondIndex);
 
-        mRandomImgFrist = mArcIconIdRandom[randomFirstIndex];
-        mRandomImgSecond = mArcIconIdRandom[randomSecondIndex];
+        int randomImgFirst = mArcIconIdRandom[randomFirstIndex];
+        int randomImgSecond = mArcIconIdRandom[randomSecondIndex];
+        int randomImgClickFirst = mArcIconClickIdRandom[randomFirstIndex];
+        int randomImgClickSecond = mArcIconClickIdRandom[randomSecondIndex];
 
         for (BitmapImage bitmapImage : mBitmapImages) {
             String bitmapImageValue = bitmapImage.getBitmapValue();
@@ -467,10 +576,9 @@ public class CircleLayout extends View {
             }
         }
 
-        for(int bitmapIndex = 0; bitmapIndex <mBitmapImages.size() ; bitmapIndex++  ){
+        for (int bitmapIndex = 0; bitmapIndex < mBitmapImages.size(); bitmapIndex++) {
             String bitmapImageValue = mBitmapImages.get(bitmapIndex).getBitmapValue();
             if (bitmapImageValue.equals("10")) {
-                //mBitmapImages.get(bitmapIndex).set
             }
 
         }
