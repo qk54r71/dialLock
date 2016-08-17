@@ -1,13 +1,19 @@
 package com.diallock.diallock.diallock.Activity.Activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.R;
+
+import java.util.concurrent.ExecutionException;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -19,15 +25,58 @@ public class SettingActivity extends AppCompatActivity {
     private LinearLayout linear_ad;
 
     private Boolean lockCheck;
+    private Boolean backFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
+        Boolean isAuthorityCheck = isAuthorityCheck();
+        if (isAuthorityCheck) {
+            CommonJava.Loging.i("SettingActivity", "isAuthorityCheck : " + isAuthorityCheck);
+            loadPassword();
+        }
+
         setFindView();
         init();
         setOnClick();
+    }
+
+    private void loadPassword() {
+        String password = CommonJava.loadSharedPreferences(SettingActivity.this, "password");
+        CommonJava.Loging.i("SettingActivity", "password : " + password);
+        if (password.isEmpty()) {
+
+            Intent intentSetPassword = new Intent(SettingActivity.this, PasswordChangeActivity.class);
+            intentSetPassword.putExtra("strSwitch", "first");
+            startActivity(intentSetPassword);
+
+        }
+
+    }
+
+    /**
+     * 마시멜로우 이상 버전에서 사용되는 권한 체크 하기
+     */
+    private Boolean isAuthorityCheck() {
+        /**
+         * 주소록 가져오기
+         */
+        //Boolean get_accounts_bl = ActivityCompat.shouldShowRequestPermissionRationale(SettingActivity.this, Manifest.permission.GET_ACCOUNTS);
+        //CommonJava.Loging.i("SettingActivity", "get_accounts_bl : " + get_accounts_bl);
+        int checkInt = 99;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            checkInt = checkSelfPermission(Manifest.permission.GET_ACCOUNTS);
+        }
+        CommonJava.Loging.i("SettingActivity", "checkInt : " + checkInt);
+        if (checkInt == 0) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, 0);
+            return false;
+        }
+
     }
 
     /**
@@ -65,6 +114,8 @@ public class SettingActivity extends AppCompatActivity {
                 linear_lock.setBackgroundResource(R.drawable.btn_bg);
                 linear_unlock.setBackgroundResource(R.drawable.btn_click);
         }
+
+        backFlag = false;
 
 
     }
@@ -121,6 +172,10 @@ public class SettingActivity extends AppCompatActivity {
                 case R.id.linear_img_change:
                     break;
                 case R.id.linear_email_change:
+
+                    Intent intentEmailChange = new Intent(SettingActivity.this, EmailChangeActivity.class);
+                    startActivity(intentEmailChange);
+
                     break;
                 case R.id.linear_ad:
                     break;
@@ -128,5 +183,55 @@ public class SettingActivity extends AppCompatActivity {
 
         }
     };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        CommonJava.Loging.i("SettingActivity", "requestCode : " + requestCode);
+        CommonJava.Loging.i("SettingActivity", "permissions : " + permissions[0]);
+        CommonJava.Loging.i("SettingActivity", "grantResults : " + grantResults[0]);
+        if (grantResults[0] != -1) {
+            CommonJava.Loging.i("SettingActivity", "퍼미션 됬다 : " + grantResults);
+            loadPassword();
+        } else {
+            finish();
+        }
+
+
+    }
+
+    /**
+     * 뒤로가기 버튼 클릭 시 종료
+     */
+    @Override
+    public void onBackPressed() {
+
+        CommonJava.Loging.i("MainActivity", "onBackPressed()");
+
+
+        if (backFlag) {
+
+            CommonJava.Loging.i("MainActivity", "onBackPressed() : 종료");
+
+            ActivityCompat.finishAffinity(this);
+            System.exit(0);
+            finish();
+        } else {
+            backFlag = true;
+
+            Toast.makeText(SettingActivity.this, "한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+            Handler han = new Handler();
+            han.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    backFlag = false;
+                }
+            }, 2000);
+        }
+
+    }
+
 
 }

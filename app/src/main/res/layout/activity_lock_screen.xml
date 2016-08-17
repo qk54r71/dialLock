@@ -30,14 +30,7 @@
             android:layout_marginTop="-70dp">
 
             <Button
-                android:id="@+id/button6"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_gravity="left"
-                android:background="@drawable/user_add" />
-
-            <Button
-                android:id="@+id/button7"
+                android:id="@+id/btn_find_pass"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_alignParentEnd="true"

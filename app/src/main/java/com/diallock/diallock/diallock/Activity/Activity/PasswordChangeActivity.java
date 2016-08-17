@@ -1,12 +1,16 @@
 package com.diallock.diallock.diallock.Activity.Activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
@@ -22,6 +26,8 @@ public class PasswordChangeActivity extends AppCompatActivity {
     private Button pass_btn_ok;
     private TextView pass_txt_lock;
     private Boolean passProgress;
+    private String strSwitch;
+    private Boolean backFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,12 @@ public class PasswordChangeActivity extends AppCompatActivity {
     private void init() {
         passNumber = null;
         passProgress = false;
+        backFlag = false;
+        strSwitch = getIntent().getStringExtra("strSwitch");
+
+        if (strSwitch != null && strSwitch.equals("first")) {
+            pass_btn_cancle.setEnabled(false);
+        }
     }
 
     private void setOnClick() {
@@ -71,6 +83,21 @@ public class PasswordChangeActivity extends AppCompatActivity {
 
                     break;
                 case R.id.pass_btn_ok:
+
+                    if (passProgress) {
+                        String strPassword = (String) pass_txt_lock.getText();
+                        CommonJava.saveSharedPreferences(PasswordChangeActivity.this, "password", strPassword);
+
+                        String email = CommonJava.getGmail(PasswordChangeActivity.this);
+
+                        CommonJava.saveSharedPreferences(PasswordChangeActivity.this, "email", email);
+
+                        Intent intentSetting = new Intent(PasswordChangeActivity.this, SettingActivity.class);
+                        startActivity(intentSetting);
+                        finish();
+
+                    }
+
                     break;
             }
         }
@@ -121,4 +148,35 @@ public class PasswordChangeActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
+    /**
+     * 뒤로가기 버튼 클릭 시 종료
+     */
+    @Override
+    public void onBackPressed() {
+
+        CommonJava.Loging.i("MainActivity", "onBackPressed()");
+
+
+        if (backFlag) {
+
+            CommonJava.Loging.i("MainActivity", "onBackPressed() : 종료");
+
+            ActivityCompat.finishAffinity(this);
+            System.exit(0);
+            finish();
+        } else {
+            backFlag = true;
+
+            Toast.makeText(PasswordChangeActivity.this, "한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+            Handler han = new Handler();
+            han.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    backFlag = false;
+                }
+            }, 2000);
+        }
+
+    }
 }

@@ -1,8 +1,13 @@
 package com.diallock.diallock.diallock.Activity.Common;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.Patterns;
+
+import java.util.regex.Pattern;
 
 /**
  * Created by Administrator on 2016-08-10
@@ -41,7 +46,7 @@ public class CommonJava {
      * @return
      */
     public static String loadSharedPreferences(Context context, String strRequest) {
-        SharedPreferences prefs = context.getSharedPreferences("saveUser", context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("dialUser", context.MODE_PRIVATE);
 
         CommonJava.Loging.i(context.getClass().getName(), strRequest + " : " + prefs.getString(strRequest, ""));
 
@@ -58,13 +63,34 @@ public class CommonJava {
      */
     public static Boolean saveSharedPreferences(Context context, String strRequestName, String strRequestValue) {
 
-        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences("saveUser", context.getApplicationContext().MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getApplicationContext().getSharedPreferences("dialUser", context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
+        editor.remove(strRequestName);
 
         editor.putString(strRequestName, strRequestValue);
 
         editor.commit();
+
+        CommonJava.Loging.i(context.getClass().getName(), "strRequestName : " + strRequestName + " // strRequestValue : " + strRequestValue);
+
         return true;
+    }
+
+    /**
+     * Gmail 가져오기
+     */
+    public static String getGmail(Context context) {
+        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
+        Account[] accounts = AccountManager.get(context).getAccounts();
+
+        String email = null;
+
+        for (Account account : accounts) {
+            if (emailPattern.matcher(account.name).matches()) {
+                email = account.name;
+                CommonJava.Loging.i("LockScreenActivity", "email : " + email);
+            }
+        }
+        return email;
     }
 }
