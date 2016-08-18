@@ -31,6 +31,8 @@ public class CircleDial extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    static View mView;
+
     public CircleDial() {
         // Required empty public constructor
     }
@@ -61,7 +63,7 @@ public class CircleDial extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        CommonJava.Loging.i("CircleDial","onCreate()");
+        CommonJava.Loging.i("CircleDial", "onCreate()");
 
     }
 
@@ -70,9 +72,9 @@ public class CircleDial extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_circle_dial, container, false);
+        mView = inflater.inflate(R.layout.fragment_circle_dial, container, false);
 
-        return view;
+        return mView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -112,5 +114,16 @@ public class CircleDial extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mView != null) {
+            ViewGroup parent = (ViewGroup) mView.getParent();
+            if (parent != null) {
+                parent.removeView(mView);
+            }
+        }
     }
 }

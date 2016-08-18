@@ -1,18 +1,26 @@
 package com.diallock.diallock.diallock.Activity.Activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.R;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class SettingActivity extends AppCompatActivity {
@@ -26,6 +34,8 @@ public class SettingActivity extends AppCompatActivity {
 
     private Boolean lockCheck;
     private Boolean backFlag;
+
+    final int REQ_CODE_SELECT_IMAGE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,17 +75,23 @@ public class SettingActivity extends AppCompatActivity {
          */
         //Boolean get_accounts_bl = ActivityCompat.shouldShowRequestPermissionRationale(SettingActivity.this, Manifest.permission.GET_ACCOUNTS);
         //CommonJava.Loging.i("SettingActivity", "get_accounts_bl : " + get_accounts_bl);
-        int checkInt = 99;
+        int checkGetAccounts = 99;
+        int checkReadExternalStorage = 99;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            checkInt = checkSelfPermission(Manifest.permission.GET_ACCOUNTS);
+            checkGetAccounts = checkSelfPermission(Manifest.permission.GET_ACCOUNTS);
+            checkReadExternalStorage = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
         }
-        CommonJava.Loging.i("SettingActivity", "checkInt : " + checkInt);
-        if (checkInt == 0) {
-            return true;
-        } else {
+        CommonJava.Loging.i("SettingActivity", "checkGetAccounts : " + checkGetAccounts);
+        if (checkGetAccounts == -1) {
             ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, 0);
             return false;
+        } else if (checkReadExternalStorage == -1) {
+            ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            return false;
         }
+
+
+        return true;
 
     }
 
@@ -170,6 +186,12 @@ public class SettingActivity extends AppCompatActivity {
 
                     break;
                 case R.id.linear_img_change:
+
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                    intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, REQ_CODE_SELECT_IMAGE);
+
                     break;
                 case R.id.linear_email_change:
 
@@ -192,8 +214,17 @@ public class SettingActivity extends AppCompatActivity {
         CommonJava.Loging.i("SettingActivity", "permissions : " + permissions[0]);
         CommonJava.Loging.i("SettingActivity", "grantResults : " + grantResults[0]);
         if (grantResults[0] != -1) {
-            CommonJava.Loging.i("SettingActivity", "퍼미션 됬다 : " + grantResults);
-            loadPassword();
+
+            int checkReadExternalStorage = 99;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                checkReadExternalStorage = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+            }
+            if (checkReadExternalStorage == -1) {
+                ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            } else {
+                CommonJava.Loging.i("SettingActivity", "퍼미션 됬다 : " + grantResults);
+                loadPassword();
+            }
         } else {
             finish();
         }
@@ -231,6 +262,63 @@ public class SettingActivity extends AppCompatActivity {
             }, 2000);
         }
 
+    }
+
+    /**
+     * 갤러리에서 선택된 이미지 가져오기
+     * 출처 {Link :http://ankyu.entersoft.kr/Lecture/android/gallery_01.asp}
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        //Toast.makeText(getBaseContext(), "resultCode : " + resultCode, Toast.LENGTH_SHORT).show();
+        CommonJava.Loging.i("SettingActivity", "onActivityResult resultCode :" + resultCode);
+
+        if (requestCode == REQ_CODE_SELECT_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                /* // 원본
+                try {
+                    //Uri에서 이미지 이름을 얻어온다.
+                    //String name_Str = getImageNameToUri(data.getData());
+
+                    //이미지 데이터를 비트맵으로 받아온다.
+                    Bitmap image_bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                    ImageView image = (ImageView)findViewById(R.id.imageView1);
+
+                    //배치해놓은 ImageView에 set
+                    image.setImageBitmap(image_bitmap);
+
+
+                    //Toast.makeText(getBaseContext(), "name_Str : "+name_Str , Toast.LENGTH_SHORT).show();
+
+
+
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+
+                String strUrl = String.valueOf(data.getData());
+                CommonJava.saveSharedPreferences(SettingActivity.this, "imgUrl", strUrl);
+                CommonJava.Loging.i("SettingActivity", "onActivityResult strUrl : " + strUrl);
+
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+
+                CommonJava.saveSharedPreferences(SettingActivity.this, "imgUrl", null);
+                CommonJava.Loging.i("SettingActivity", "onActivityResult strUrl null ");
+            }
+        }
     }
 
 

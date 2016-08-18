@@ -4,9 +4,14 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.Patterns;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -54,7 +59,7 @@ public class CommonJava {
     }
 
     /**
-     * 요청하는 값을 저장
+     * 요청하는 String 값을 저장
      *
      * @param context         : 현재 화면
      * @param strRequestName  : 저장될 이름
@@ -93,4 +98,124 @@ public class CommonJava {
         }
         return email;
     }
+
+    /**
+     * 현재 년도 가져오기
+     *
+     * @return
+     */
+    public static String getYear() {
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.KOREA);
+        String strYear = df.format(new Date());
+
+        return strYear;
+    }
+
+    /**
+     * 현재 월 가져오기
+     *
+     * @return
+     */
+    public static String getMonth() {
+
+        SimpleDateFormat df = new SimpleDateFormat("MM", Locale.KOREA);
+        String strMonth = df.format(new Date());
+
+        return strMonth;
+    }
+
+    /**
+     * 현재 일 가져오기
+     *
+     * @return
+     */
+    public static String getDay() {
+
+        SimpleDateFormat df = new SimpleDateFormat("dd", Locale.KOREA);
+        String strDay = df.format(new Date());
+
+        return strDay;
+    }
+
+    /**
+     * 현재 오전,오후 가져오기
+     *
+     * @return
+     */
+    public static String getAmPm() {
+
+        SimpleDateFormat df = new SimpleDateFormat("HH", Locale.KOREA);
+        String strHour = df.format(new Date());
+        int intHour = Integer.parseInt(strHour);
+        String strAmPm = null;
+
+        if (intHour >= 13) {
+            strAmPm = "오후";
+        } else {
+            strAmPm = "오전";
+        }
+
+
+        return strAmPm;
+    }
+
+    /**
+     * 현재 시 가져오기
+     *
+     * @return
+     */
+    public static String getHour() {
+
+        SimpleDateFormat df = new SimpleDateFormat("HH", Locale.KOREA);
+        String strHour = df.format(new Date());
+        int intHour = Integer.parseInt(strHour);
+
+        strHour = String.valueOf(intHour % 12 == 0 ? 12 : intHour % 12);
+
+        return strHour;
+    }
+
+    /**
+     * 현재 분 가져오기
+     *
+     * @return
+     */
+    public static String getMinute() {
+
+        SimpleDateFormat df = new SimpleDateFormat("mm", Locale.KOREA);
+        String strMinute = df.format(new Date());
+
+        return strMinute;
+    }
+
+    /**
+     * 현재 요일 가져오기
+     *
+     * @return
+     */
+    public static String getDayOfWeek() {
+        Calendar cal = Calendar.getInstance();
+        String strWeek = null;
+
+        int nWeek = cal.get(Calendar.DAY_OF_WEEK);
+        if (nWeek == 1) {
+            strWeek = "일요일";
+        } else if (nWeek == 2) {
+            strWeek = "월요";
+        } else if (nWeek == 3) {
+            strWeek = "화요일";
+        } else if (nWeek == 4) {
+            strWeek = "수요일";
+        } else if (nWeek == 5) {
+            strWeek = "목요일";
+        } else if (nWeek == 6) {
+            strWeek = "금요일";
+        } else if (nWeek == 7) {
+            strWeek = "토요일";
+        }
+
+        return strWeek;
+    }
+
 }

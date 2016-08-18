@@ -11,6 +11,7 @@ import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
@@ -18,6 +19,12 @@ import com.diallock.diallock.diallock.Activity.Common.GMailSender;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
 import java.util.regex.Pattern;
 
 /**
@@ -28,11 +35,14 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private CircleLayout circleLayout;
     private Boolean backFlag;
+    private TextView txt_lock_day;
+    private TextView txt_lock_time;
 
     /**
      * 비밀번호 찾기 버튼
      */
     private Button btn_find_pass;
+    private Timer mTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +61,54 @@ public class LockScreenActivity extends AppCompatActivity {
     private void setFindView() {
         circleLayout = (CircleLayout) findViewById(R.id.circle_screen);
         btn_find_pass = (Button) findViewById(R.id.btn_find_pass);
+        txt_lock_day = (TextView) findViewById(R.id.txt_lock_day);
+        txt_lock_time = (TextView) findViewById(R.id.txt_lock_time);
+
     }
 
     private void init() {
         backFlag = false;
+
+        String strTxtLockDay =
+                CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + CommonJava.getDayOfWeek();
+        String strTxtLockTime =
+                CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
+
+        txt_lock_day.setText(strTxtLockDay);
+        txt_lock_time.setText(strTxtLockTime);
+
+        MainTimerTask timerTask = new MainTimerTask();
+
+        mTimer = new Timer();
+
+        mTimer.schedule(timerTask, 500, 1000);
+
+
     }
+
+    private Handler mHandler = new Handler();
+
+    private Runnable mUpdateTimeTask = new Runnable() {
+
+        public void run() {
+            String strTxtLockTime =
+                    CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
+            txt_lock_time.setText(strTxtLockTime);
+        }
+
+    };
+
+
+    class MainTimerTask extends TimerTask {
+
+        public void run() {
+
+            mHandler.post(mUpdateTimeTask);
+
+        }
+
+    }
+
 
     private void setOnClick() {
         btn_find_pass.setOnClickListener(onClickListener);
@@ -69,29 +122,16 @@ public class LockScreenActivity extends AppCompatActivity {
                     CommonJava.Loging.i("LockScreenActivity", "onClick()");
                     startEmailSend();
 
+                    Toast.makeText(LockScreenActivity.this, "플레이스토어에 등록된 gmail 로 비밀번호가 전송되었습니다.", Toast.LENGTH_SHORT).show();
+
                     break;
             }
         }
     };
 
     /**
-     * Gmail 가져오기
+     * 등록된 이메일로 비밀번호 보내는 함수
      */
-    private String getGmail() {
-        Pattern emailPattern = Patterns.EMAIL_ADDRESS;
-        Account[] accounts = AccountManager.get(this).getAccounts();
-
-        String email = null;
-
-        for (Account account : accounts) {
-            if (emailPattern.matcher(account.name).matches()) {
-                email = account.name;
-                CommonJava.Loging.i("LockScreenActivity", "email : " + email);
-            }
-        }
-        return email;
-    }
-
     private void startEmailSend() {
 
         AsyncTask asyncTask = new AsyncTask() {
@@ -179,5 +219,40 @@ public class LockScreenActivity extends AppCompatActivity {
         }
 
     }
+
+    @Override
+
+    protected void onDestroy() {
+
+        mTimer.cancel();
+
+        super.onDestroy();
+
+    }
+
+
+    @Override
+
+    protected void onPause() {
+
+        mTimer.cancel();
+
+        super.onPause();
+
+    }
+
+
+    @Override
+
+    protected void onResume() {
+
+        super.onResume();
+
+        MainTimerTask timerTask = new MainTimerTask();
+
+        mTimer.schedule(timerTask, 500, 3000);
+
+    }
+
 
 }
