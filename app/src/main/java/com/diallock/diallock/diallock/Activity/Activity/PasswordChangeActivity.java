@@ -53,8 +53,16 @@ public class PasswordChangeActivity extends AppCompatActivity {
         backFlag = false;
         strSwitch = getIntent().getStringExtra("strSwitch");
 
-        if (strSwitch != null && strSwitch.equals("first")) {
-            pass_btn_cancle.setEnabled(false);
+        switch (strSwitch) {
+            case "veryfirst":
+                pass_btn_cancle.setEnabled(false);
+                break;
+            case "first":
+                strSwitch = "first";
+                break;
+            case "second":
+                strSwitch = "second";
+                break;
         }
     }
 
@@ -84,24 +92,83 @@ public class PasswordChangeActivity extends AppCompatActivity {
                     break;
                 case R.id.pass_btn_ok:
 
-                    if (passProgress) {
-                        String strPassword = (String) pass_txt_lock.getText();
-                        CommonJava.saveSharedPreferences(PasswordChangeActivity.this, "password", strPassword);
+                    if (passProgress && isPasswordLangth()) {
 
-                        String email = CommonJava.getGmail(PasswordChangeActivity.this);
+                        switch (strSwitch) {
+                            case "first":
+                                Intent intentSettingFirst = new Intent(PasswordChangeActivity.this, PasswordChangeActivity.class);
+                                intentSettingFirst.putExtra("strSwitch", "second");
 
-                        CommonJava.saveSharedPreferences(PasswordChangeActivity.this, "email", email);
+                                String strPasswordFirst = (String) pass_txt_lock.getText();
+                                intentSettingFirst.putExtra("password", strPasswordFirst);
 
-                        Intent intentSetting = new Intent(PasswordChangeActivity.this, SettingActivity.class);
-                        startActivity(intentSetting);
-                        finish();
+                                startActivity(intentSettingFirst);
 
+                                Toast.makeText(getApplicationContext(), "한번 더 패스워드를 입력하세요.", Toast.LENGTH_SHORT).show();
+
+                                finish();
+                                break;
+                            case "second":
+                                if (isPasswordSame()) {
+                                    String strPasswordSecond = (String) pass_txt_lock.getText();
+                                    CommonJava.saveSharedPreferences(PasswordChangeActivity.this, "password", strPasswordSecond);
+
+                                    String email = CommonJava.getGmail(PasswordChangeActivity.this);
+
+                                    CommonJava.saveSharedPreferences(PasswordChangeActivity.this, "email", email);
+
+                                    Intent intentSettingSecond = new Intent(PasswordChangeActivity.this, SettingActivity.class);
+                                    startActivity(intentSettingSecond);
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "전 단계의 패스워드와 맞지 않습니다.", Toast.LENGTH_SHORT).show();
+                                }
+                                break;
+                        }
                     }
 
                     break;
             }
         }
     };
+
+    /**
+     * 패스워드 길이 조절
+     *
+     * @return
+     */
+    private Boolean isPasswordLangth() {
+
+        String strPassword = (String) pass_txt_lock.getText();
+        int passwordLangth = strPassword.length();
+
+        int minimumPass = 2;
+        int maximumPass = 6;
+
+        if (passwordLangth >= minimumPass && passwordLangth <= maximumPass) {
+            return true;
+        } else {
+            Toast.makeText(getApplicationContext(), "비밀번호는 2~4자리로 만들어주세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+    }
+
+    /**
+     * 전 단계의 패스워드와 현재 패스워드가 맞는지 확인하는 함수
+     */
+    private Boolean isPasswordSame() {
+
+        String strPasswordFirst = getIntent().getStringExtra("password");
+        String strPasswordSecond = (String) pass_txt_lock.getText();
+
+        if (strPasswordFirst.equals(strPasswordSecond)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 
     /**
      * 눌린 값을 받는 함수

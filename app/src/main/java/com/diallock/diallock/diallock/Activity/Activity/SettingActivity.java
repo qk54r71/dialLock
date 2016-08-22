@@ -59,7 +59,7 @@ public class SettingActivity extends AppCompatActivity {
         if (password.isEmpty()) {
 
             Intent intentSetPassword = new Intent(SettingActivity.this, PasswordChangeActivity.class);
-            intentSetPassword.putExtra("strSwitch", "first");
+            intentSetPassword.putExtra("strSwitch", "veryfirst");
             startActivity(intentSetPassword);
 
         }
@@ -182,6 +182,7 @@ public class SettingActivity extends AppCompatActivity {
                 case R.id.linear_pass_change:
 
                     Intent intentPassChange = new Intent(SettingActivity.this, PasswordChangeActivity.class);
+                    intentPassChange.putExtra("strSwitch", "first");
                     startActivity(intentPassChange);
 
                     break;

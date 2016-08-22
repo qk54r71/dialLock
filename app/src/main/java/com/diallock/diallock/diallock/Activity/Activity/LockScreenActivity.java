@@ -247,10 +247,10 @@ public class LockScreenActivity extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
-
-        MainTimerTask timerTask = new MainTimerTask();
-
-        mTimer.schedule(timerTask, 500, 3000);
+        if(mTimer != null){
+            MainTimerTask timerTask = new MainTimerTask();
+            mTimer.schedule(timerTask, 500, 3000);
+        }
 
     }
 

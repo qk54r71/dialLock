@@ -14,6 +14,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -97,6 +99,13 @@ public class CircleLayout extends View {
      */
     private String mPassword;
 
+    /**
+     * 비밀번호 입력 틀렸을 시 사용되는 변수
+     */
+    private Handler handlerError;
+    private Boolean errorDrowBl;
+
+
     public CircleLayout(Context context) {
         this(context, null);
     }
@@ -139,10 +148,11 @@ public class CircleLayout extends View {
         } else {
             CommonJava.Loging.e(mContext.getClass().getName(), "centerStrImgUrl Null ");
             //TODO: 기본 이미지 로고 넣어야 함
-            mCenterBitmapImg = BitmapFactory.decodeResource(getResources(), R.drawable.circle);
+            mCenterBitmapImg = BitmapFactory.decodeResource(getResources(), R.drawable.dialcenter);
         }
 
         mPassword = new String();
+        errorDrowBl = false;
 
     }
 
@@ -289,8 +299,15 @@ public class CircleLayout extends View {
         /**
          * 가운에 화면에 이미지 넣기
          */
+        String centerStrImgUrl = CommonJava.loadSharedPreferences(mContext, "imgUrl");
+        Bitmap centerImg = null;
+        if (centerStrImgUrl != null && !centerStrImgUrl.isEmpty()) {
 
-        Bitmap centerImg = getCircleBitmap(mCenterBitmapImg, mInnerRadius);
+            centerImg = getCircleBitmap(mCenterBitmapImg, mInnerRadius);
+        } else {
+            centerImg = getCircleBitmap(mCenterBitmapImg, mInnerRadius / 2);
+
+        }
         canvas.drawBitmap(centerImg, width / 2 - centerImg.getWidth() / 2, height / 2 - centerImg.getHeight() / 2, null);
 
 
@@ -392,9 +409,10 @@ public class CircleLayout extends View {
 
                 }
             } else {
-                mStartDial = false;
-                mDragIndex = NUM_NULL;
-                mDialImageInfo.initDialImageInfo();
+                if (errorDrowBl == false) {
+                    errorDrowBl = true;
+                    errorDrow();
+                }
             }
         }
     }
@@ -423,7 +441,7 @@ public class CircleLayout extends View {
 
             CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd loadPassword : " + loadPassword);
 
-            if (loadPassword.equals(mPassword)) {
+            if (isImaginaryCheck(mPassword)) {
                 Toast.makeText(mContext, "맞는 비밀번호 입니다.", Toast.LENGTH_SHORT).show();
                 Intent intentSetting = new Intent(mContext, SettingActivity.class);
                 mContext.startActivity(intentSetting);
@@ -743,6 +761,93 @@ public class CircleLayout extends View {
         Boolean vactorBl = (currentIndex == (preIndex + 1) % 12) && (preIndex == (prePreIndex + 1) % 12) || (prePreIndex == (preIndex + 1) % 12) && (preIndex == (currentIndex + 1) % 12);
 
         return vactorBl;
+    }
+
+    /**
+     * 비밀번호 입력시 틀렸을 경우 점멸
+     */
+    private void errorDrow() {
+
+        final ArrayList<BitmapImage> bitmaps = mBitmapImages;
+        final int[] msgSwitch = {0};
+
+        handlerError = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                CommonJava.Loging.i(getClass().getName(), "handlerError msgSwitch[0] : " + msgSwitch[0]);
+                switch (msgSwitch[0]) {
+                    case 0:
+                    case 2:
+                        for (int i = 0; i < bitmaps.size(); i++) {
+                            mBitmapImages.get(i).setNum(mResizeIconClick.get(i));
+                            mBitmapImages.get(i).setNumClick(mResizeIconClick.get(i));
+                        }
+                        invalidate();
+                        msgSwitch[0]++;
+                        handlerError.sendEmptyMessageDelayed(0, 500);
+                        break;
+                    case 1:
+
+                        for (int i = 0; i < bitmaps.size(); i++) {
+                            mBitmapImages.get(i).setNum(mResizeIcon.get(i));
+                            mBitmapImages.get(i).setNumClick(mResizeIcon.get(i));
+                        }
+                        msgSwitch[0]++;
+                        invalidate();
+                        handlerError.sendEmptyMessageDelayed(0, 500);
+                        break;
+                    case 3:
+
+                        for (int i = 0; i < bitmaps.size(); i++) {
+                            mBitmapImages.get(i).setNum(mResizeIcon.get(i));
+                            mBitmapImages.get(i).setNumClick(mResizeIconClick.get(i));
+                        }
+                        msgSwitch[0] = 0;
+                        invalidate();
+
+                        mStartDial = false;
+                        mDragIndex = NUM_NULL;
+                        mDialImageInfo.initDialImageInfo();
+                        errorDrowBl = false;
+                        break;
+                }
+
+
+            }
+        };
+
+        handlerError.sendEmptyMessageDelayed(0, 500);
+
+
+    }
+
+    /**
+     * 허수 체크 함수
+     *
+     * @return
+     */
+    private Boolean isImaginaryCheck(String strPassword) {
+        CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck strPassword : " + strPassword);
+
+        String loadPassword = CommonJava.loadSharedPreferences(mContext, "password");
+        String strPass = strPassword;
+        CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck strPass : " + strPass);
+        int minimumPass = 2;
+        int maximumPass = loadPassword.length() * 2;
+
+        if (strPassword.length() >= minimumPass && strPassword.length() <= maximumPass) {
+
+            if (strPassword.contains(loadPassword)) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+
     }
 
 }

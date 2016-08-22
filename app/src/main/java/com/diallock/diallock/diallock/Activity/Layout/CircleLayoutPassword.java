@@ -7,6 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.Display;
@@ -84,6 +87,7 @@ public class CircleLayoutPassword extends View {
      * 현재 화면의 액티비티
      */
     private PasswordChangeActivity passwordChangeActivity;
+    private Bitmap mCenterBitmapImg;
 
     public CircleLayoutPassword(Context context) {
         this(context, null);
@@ -108,18 +112,37 @@ public class CircleLayoutPassword extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         mSweepAngle = TOTAL_DEGREE / mItemCount;
+        init();
+    }
+
+    private void init() {
 
         bitmapImageListInit();
 
+        mCenterBitmapImg = BitmapFactory.decodeResource(getResources(), R.drawable.dialcenter);
     }
 
     /**
      * 이미지 리사이즈
      *
+     * @param bitmap : 기존 이미지
+     * @return
+     */
+    private Bitmap resizeBitmap(Bitmap bitmap) {
+        int bitmapWidth = (int) (bitmap.getWidth() * 0.9);
+        int bitmapHeight = (int) (bitmap.getHeight() * 0.9);
+
+        Bitmap resizeBitmap = Bitmap.createScaledBitmap(bitmap, bitmapWidth, bitmapHeight, true);
+
+        return resizeBitmap;
+    }
+
+    /**
+     * 이미지 배열 리사이즈
+     *
      * @param bitmaps : 기존 이미지 리스트
      * @return
      */
-
     private ArrayList<Bitmap> resizeBitmap(ArrayList<Bitmap> bitmaps) {
 
         ArrayList<Bitmap> resizeBitmap = new ArrayList<Bitmap>();
@@ -161,10 +184,10 @@ public class CircleLayoutPassword extends View {
         CommonJava.Loging.i("CircleLayoutPassword", "Display parentLinearHeight : " + parentLinearHeight);
 
         if (mInnerRadius == 0) {
-            mInnerRadius = height / 2 - 250;
+            mInnerRadius = height / 2 - (width * 270 / 1440);
         }
         if (mOuterRadius == 0) {
-            mOuterRadius = height / 2 - 30;
+            mOuterRadius = height / 2 - (width * 30 / 1440);
         }
 
         CommonJava.Loging.i("CircleLayoutPassword", "현재 화면 가로 getWidth : " + getWidth());
@@ -214,7 +237,12 @@ public class CircleLayoutPassword extends View {
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(width / 2, height / 2, mInnerRadius, mPaint);
-        //canvas.drawBitmap(mCenterIcon, width / 2 - mCenterIcon.getWidth() / 2, height / 2 - mCenterIcon.getHeight() / 2, null);
+
+        /**
+         * 가운에 화면에 이미지 넣기
+         */
+        Bitmap centerImg = getCircleBitmap(mCenterBitmapImg, mInnerRadius/2);
+        canvas.drawBitmap(centerImg, width / 2 - centerImg.getWidth() / 2, height / 2 - centerImg.getHeight() / 2, null);
 
 
         float bitmapImgX = width / 2;
@@ -233,6 +261,44 @@ public class CircleLayoutPassword extends View {
 
         super.onDraw(canvas);
     }
+
+    /**
+     * 비트맵 이미지 리사이징 하기
+     * 비트맵 이미지 원으로 만들기
+     *
+     * @param bitmap
+     * @return
+     */
+    private Bitmap getCircleBitmap(Bitmap bitmap, int innerRadius) {
+        Bitmap reSize = Bitmap.createScaledBitmap(bitmap, 2 * innerRadius, 2 * innerRadius, true);
+        Bitmap output = Bitmap.createBitmap(reSize.getWidth(), reSize.getHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+
+        final Paint paint = new Paint();
+
+        final Rect rect = new Rect(0, 0, reSize.getWidth(), reSize.getHeight());
+
+        paint.setAntiAlias(true);
+
+        canvas.drawARGB(0, 0, 0, 0);
+
+        paint.setColor(color);
+
+        int size = (reSize.getWidth() / 2);
+
+        canvas.drawCircle(size, size, size, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+        canvas.drawBitmap(reSize, rect, rect, paint);
+
+        return output;
+
+    }
+
 
     /**
      * 최초 버튼 눌린 좌표값
