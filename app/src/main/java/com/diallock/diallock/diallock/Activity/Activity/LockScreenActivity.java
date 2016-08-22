@@ -8,14 +8,18 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Patterns;
+import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Common.GMailSender;
+import com.diallock.diallock.diallock.Activity.Common.HomeKeyLocker;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
 
@@ -44,6 +48,11 @@ public class LockScreenActivity extends AppCompatActivity {
     private Button btn_find_pass;
     private Timer mTimer;
 
+    /**
+     * test용 버튼
+     */
+    private Button btn_cancle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +62,14 @@ public class LockScreenActivity extends AppCompatActivity {
         setFindView();
         init();
         setOnClick();
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
+        HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
+
+        homeKeyLoader.lock(this);
 
 
     }
@@ -64,6 +81,7 @@ public class LockScreenActivity extends AppCompatActivity {
         txt_lock_day = (TextView) findViewById(R.id.txt_lock_day);
         txt_lock_time = (TextView) findViewById(R.id.txt_lock_time);
 
+        btn_cancle = (Button) findViewById(R.id.btn_cancle); // test용
     }
 
     private void init() {
@@ -112,6 +130,8 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private void setOnClick() {
         btn_find_pass.setOnClickListener(onClickListener);
+
+        btn_cancle.setOnClickListener(onClickListener); // test용
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -124,6 +144,9 @@ public class LockScreenActivity extends AppCompatActivity {
 
                     Toast.makeText(LockScreenActivity.this, "플레이스토어에 등록된 gmail 로 비밀번호가 전송되었습니다.", Toast.LENGTH_SHORT).show();
 
+                    break;
+                case R.id.btn_cancle: // test용
+                    finish();
                     break;
             }
         }
@@ -247,10 +270,18 @@ public class LockScreenActivity extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
-        if(mTimer != null){
+        if (mTimer != null) {
             MainTimerTask timerTask = new MainTimerTask();
+            mTimer = new Timer();
             mTimer.schedule(timerTask, 500, 3000);
         }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        return false;
 
     }
 

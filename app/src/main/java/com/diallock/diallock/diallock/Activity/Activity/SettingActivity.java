@@ -3,10 +3,13 @@ package com.diallock.diallock.diallock.Activity.Activity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Common.ScreenService;
 import com.diallock.diallock.diallock.R;
 
 import java.io.File;
@@ -36,6 +40,8 @@ public class SettingActivity extends AppCompatActivity {
     private Boolean backFlag;
 
     final int REQ_CODE_SELECT_IMAGE = 100;
+    private final static int PERMISSIONS_REQ_NUM = 6242;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,17 +83,35 @@ public class SettingActivity extends AppCompatActivity {
         //CommonJava.Loging.i("SettingActivity", "get_accounts_bl : " + get_accounts_bl);
         int checkGetAccounts = 99;
         int checkReadExternalStorage = 99;
+        int checkReadPhoneState = 99;
+        Boolean checkOverlays = false;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             checkGetAccounts = checkSelfPermission(Manifest.permission.GET_ACCOUNTS);
             checkReadExternalStorage = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+            checkReadPhoneState = checkSelfPermission(Manifest.permission.READ_PHONE_STATE);
+            checkOverlays = Settings.canDrawOverlays(this);
+
         }
-        CommonJava.Loging.i("SettingActivity", "checkGetAccounts : " + checkGetAccounts);
         if (checkGetAccounts == -1) {
+            CommonJava.Loging.i("SettingActivity", "checkGetAccounts : " + checkGetAccounts);
             ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, 0);
             return false;
         } else if (checkReadExternalStorage == -1) {
+            CommonJava.Loging.i("SettingActivity", "checkReadExternalStorage : " + checkReadExternalStorage);
             ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             return false;
+        } else if (checkReadPhoneState == -1) {
+            CommonJava.Loging.i("SettingActivity", "checkReadPhoneState : " + checkReadPhoneState);
+            ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
+
+        } else if (!checkOverlays) {
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                CommonJava.Loging.i("SettingActivity", "checkOverlays : " + checkOverlays);
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 6242);
+            }
         }
 
 
@@ -176,6 +200,10 @@ public class SettingActivity extends AppCompatActivity {
                         linear_lock.setBackgroundResource(R.drawable.btn_bg);
                         linear_unlock.setBackgroundResource(R.drawable.btn_click);
                         lockCheck = false;
+
+                        Intent intentStopService = new Intent(SettingActivity.this, ScreenService.class);
+                        stopService(intentStopService);
+
                     }
 
                     break;
@@ -214,18 +242,30 @@ public class SettingActivity extends AppCompatActivity {
         CommonJava.Loging.i("SettingActivity", "requestCode : " + requestCode);
         CommonJava.Loging.i("SettingActivity", "permissions : " + permissions[0]);
         CommonJava.Loging.i("SettingActivity", "grantResults : " + grantResults[0]);
+
         if (grantResults[0] != -1) {
 
             int checkReadExternalStorage = 99;
+            int checkReadPhoneState = 99;
+            Boolean checkOverlays = false;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 checkReadExternalStorage = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                checkReadPhoneState = checkSelfPermission(Manifest.permission.READ_PHONE_STATE);
+                checkOverlays = Settings.canDrawOverlays(this);
             }
             if (checkReadExternalStorage == -1) {
+                CommonJava.Loging.i("SettingActivity", "checkReadExternalStorage : " + checkReadExternalStorage);
                 ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-            } else {
-                CommonJava.Loging.i("SettingActivity", "퍼미션 됬다 : " + grantResults);
-                loadPassword();
+            } else if (checkReadPhoneState == -1) {
+                CommonJava.Loging.i("SettingActivity", "checkReadPhoneState : " + checkReadPhoneState);
+                ActivityCompat.requestPermissions(SettingActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, 0);
+            } else if (!checkOverlays) {
+                CommonJava.Loging.i("SettingActivity", "checkOverlays : " + checkOverlays);
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, PERMISSIONS_REQ_NUM);
             }
+
         } else {
             finish();
         }
@@ -280,8 +320,9 @@ public class SettingActivity extends AppCompatActivity {
         //Toast.makeText(getBaseContext(), "resultCode : " + resultCode, Toast.LENGTH_SHORT).show();
         CommonJava.Loging.i("SettingActivity", "onActivityResult resultCode :" + resultCode);
 
-        if (requestCode == REQ_CODE_SELECT_IMAGE) {
-            if (resultCode == Activity.RESULT_OK) {
+        switch (requestCode) {
+            case REQ_CODE_SELECT_IMAGE:
+                if (resultCode == Activity.RESULT_OK) {
                 /* // 원본
                 try {
                     //Uri에서 이미지 이름을 얻어온다.
@@ -309,17 +350,26 @@ public class SettingActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }*/
 
-                String strUrl = String.valueOf(data.getData());
-                CommonJava.saveSharedPreferences(SettingActivity.this, "imgUrl", strUrl);
-                CommonJava.Loging.i("SettingActivity", "onActivityResult strUrl : " + strUrl);
+                    String strUrl = String.valueOf(data.getData());
+                    CommonJava.saveSharedPreferences(SettingActivity.this, "imgUrl", strUrl);
+                    CommonJava.Loging.i("SettingActivity", "onActivityResult strUrl : " + strUrl);
 
 
-            } else if (resultCode == Activity.RESULT_CANCELED) {
+                } else if (resultCode == Activity.RESULT_CANCELED) {
 
-                CommonJava.saveSharedPreferences(SettingActivity.this, "imgUrl", null);
-                CommonJava.Loging.i("SettingActivity", "onActivityResult strUrl null ");
-            }
+                    CommonJava.saveSharedPreferences(SettingActivity.this, "imgUrl", null);
+                    CommonJava.Loging.i("SettingActivity", "onActivityResult strUrl null ");
+                }
+                break;
+            case PERMISSIONS_REQ_NUM:
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    if (!Settings.canDrawOverlays(this)) {
+                        finish();
+                    }
+                }
+                break;
         }
+
     }
 
 

@@ -58,6 +58,15 @@
                 android:layout_alignParentTop="true"
                 android:layout_gravity="right"
                 android:background="@drawable/password_find" />
+
+            <Button
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="취소"
+                android:id="@+id/btn_cancle"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
         </RelativeLayout>
     </LinearLayout>
 

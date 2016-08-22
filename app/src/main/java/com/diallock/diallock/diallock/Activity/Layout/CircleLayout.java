@@ -1,6 +1,7 @@
 package com.diallock.diallock.diallock.Activity.Layout;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Activity.SettingActivity;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Common.ScreenService;
 import com.diallock.diallock.diallock.R;
 
 import java.io.IOException;
@@ -446,7 +448,21 @@ public class CircleLayout extends View {
                 Intent intentSetting = new Intent(mContext, SettingActivity.class);
                 mContext.startActivity(intentSetting);
                 ((Activity) mContext).finish();
+
+                String strSwitch = ((Activity) mContext).getIntent().getStringExtra("strSwitch");
+                if (strSwitch != null && strSwitch.equals("SettingActivity")) {
+
+                    CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd ScreenService start");
+                    Intent intentStopService = new Intent(mContext, ScreenService.class);
+                    mContext.startService(intentStopService);
+
+
+                }
             } else {
+                if (errorDrowBl == false) {
+                    errorDrowBl = true;
+                    errorDrow();
+                }
                 Toast.makeText(mContext, "틀린 비밀번호 입니다.", Toast.LENGTH_SHORT).show();
             }
 
