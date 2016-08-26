@@ -24,8 +24,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.Activity.LockScreenActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.Activity.SettingActivity"
             android:screenOrientation="portrait"
@@ -45,6 +44,10 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <service android:name=".Activity.Common.ScreenService"></service>
+        <activity
+            android:name=".Activity.Activity.LockScreenViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 

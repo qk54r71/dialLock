@@ -59,17 +59,17 @@ public class LockScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lock_screen);
         CommonJava.Loging.i("LockScreenActivity", "onCreate()");
 
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setFindView();
         init();
         setOnClick();
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+        //HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
 
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-
-        HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
-
-        homeKeyLoader.lock(this);
+        //homeKeyLoader.lock(this);
 
 
     }

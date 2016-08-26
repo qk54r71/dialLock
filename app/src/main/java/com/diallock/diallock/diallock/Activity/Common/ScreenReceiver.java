@@ -8,6 +8,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity;
+import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 
 /**
  * Created by park on 2016-08-22.
@@ -51,7 +52,7 @@ public class ScreenReceiver extends BroadcastReceiver {
                 disableKeyguard();
 
 
-                Intent i = new Intent(context, LockScreenActivity.class);
+                Intent i = new Intent(context, LockScreenViewActivity.class);
 
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

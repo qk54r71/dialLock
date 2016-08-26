@@ -156,6 +156,9 @@ public class CircleLayout extends View {
         mPassword = new String();
         errorDrowBl = false;
 
+
+        //((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
+
     }
 
     /**

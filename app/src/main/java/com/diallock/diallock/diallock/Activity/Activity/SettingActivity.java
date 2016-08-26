@@ -186,7 +186,7 @@ public class SettingActivity extends AppCompatActivity {
                         linear_lock.setBackgroundResource(R.drawable.btn_click);
                         linear_unlock.setBackgroundResource(R.drawable.btn_bg);
 
-                        Intent intentLockScreen = new Intent(SettingActivity.this, LockScreenActivity.class);
+                        Intent intentLockScreen = new Intent(SettingActivity.this, LockScreenViewActivity.class);
                         intentLockScreen.putExtra("strSwitch", "SettingActivity");
                         startActivity(intentLockScreen);
                         lockCheck = true;
