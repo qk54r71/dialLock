@@ -1,7 +1,6 @@
 package com.diallock.diallock.diallock.Activity.Layout;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,16 +16,20 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Activity.SettingActivity;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
-import com.diallock.diallock.diallock.Activity.Common.ScreenService;
+import com.diallock.diallock.diallock.Activity.Common.LockScreenManager;
+import com.diallock.diallock.diallock.Activity.taskAction.ScreenService;
 import com.diallock.diallock.diallock.R;
 
 import java.io.IOException;
@@ -106,6 +109,7 @@ public class CircleLayout extends View {
      */
     private Handler handlerError;
     private Boolean errorDrowBl;
+    private LockScreenManager mLockScreeniManager;
 
 
     public CircleLayout(Context context) {
@@ -361,6 +365,7 @@ public class CircleLayout extends View {
 
                 bitmapImageListShuffle();
                 invalidate();
+                isVibrator();
 
             }
         }
@@ -410,6 +415,7 @@ public class CircleLayout extends View {
                         bitmapImageListShuffle();
                         invalidate();
                     }
+                    isVibrator();
 
 
                 }
@@ -447,26 +453,30 @@ public class CircleLayout extends View {
             CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd loadPassword : " + loadPassword);
 
             if (isImaginaryCheck(mPassword)) {
-                Toast.makeText(mContext, "맞는 비밀번호 입니다.", Toast.LENGTH_SHORT).show();
-                Intent intentSetting = new Intent(mContext, SettingActivity.class);
-                mContext.startActivity(intentSetting);
-                ((Activity) mContext).finish();
+
+                CommonJava.Loging.i(mContext.getClass().getName(), "맞는 비밀번호 입니다.");
+
+                /*Intent intentSetting = new Intent(mContext, SettingActivity.class);
+                mContext.startActivity(intentSetting);*/
 
                 String strSwitch = ((Activity) mContext).getIntent().getStringExtra("strSwitch");
                 if (strSwitch != null && strSwitch.equals("SettingActivity")) {
+                    ((Activity) mContext).finish();
+
+                    CommonJava.saveSharedPreferences(mContext, "lockCheck", "true");
 
                     CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd ScreenService start");
                     Intent intentStopService = new Intent(mContext, ScreenService.class);
                     mContext.startService(intentStopService);
-
-
+                } else if(strSwitch != null && strSwitch.equals("ScreenReceiver")){
+                    ((LockScreenViewActivity) mContext).onUnlock();
                 }
             } else {
                 if (errorDrowBl == false) {
                     errorDrowBl = true;
                     errorDrow();
                 }
-                Toast.makeText(mContext, "틀린 비밀번호 입니다.", Toast.LENGTH_SHORT).show();
+                CommonJava.Loging.i(mContext.getClass().getName(), "틀린 비밀번호 입니다.");
             }
 
             mPassword = null;
@@ -746,7 +756,6 @@ public class CircleLayout extends View {
 
             mBitmapImages.add(bitmapImage);
         }
-
     }
 
     /**
@@ -756,6 +765,10 @@ public class CircleLayout extends View {
 
         bitmapImageListInit();
         Collections.shuffle(mBitmapImages);
+
+        for (BitmapImage bitmapImage : mBitmapImages) {
+            CommonJava.Loging.i(getClass().getName(), "bitmapImageListInit : " + bitmapImage.getBitmapValue());
+        }
 
     }
 
@@ -788,6 +801,7 @@ public class CircleLayout extends View {
     private void errorDrow() {
 
         final ArrayList<BitmapImage> bitmaps = mBitmapImages;
+        final ArrayList<BitmapImage> bitmapsClick = mBitmapImages;
         final int[] msgSwitch = {0};
 
         handlerError = new Handler() {
@@ -799,8 +813,8 @@ public class CircleLayout extends View {
                     case 0:
                     case 2:
                         for (int i = 0; i < bitmaps.size(); i++) {
-                            mBitmapImages.get(i).setNum(mResizeIconClick.get(i));
-                            mBitmapImages.get(i).setNumClick(mResizeIconClick.get(i));
+                            mBitmapImages.get(i).setNum(mResizeIconClick.get(Integer.parseInt(mBitmapImages.get(i).getBitmapValue())));
+                            mBitmapImages.get(i).setNumClick(mResizeIconClick.get(Integer.parseInt(mBitmapImages.get(i).getBitmapValue())));
                         }
                         invalidate();
                         msgSwitch[0]++;
@@ -809,8 +823,8 @@ public class CircleLayout extends View {
                     case 1:
 
                         for (int i = 0; i < bitmaps.size(); i++) {
-                            mBitmapImages.get(i).setNum(mResizeIcon.get(i));
-                            mBitmapImages.get(i).setNumClick(mResizeIcon.get(i));
+                            mBitmapImages.get(i).setNum(mResizeIcon.get(Integer.parseInt(mBitmapImages.get(i).getBitmapValue())));
+                            mBitmapImages.get(i).setNumClick(mResizeIcon.get(Integer.parseInt(mBitmapImages.get(i).getBitmapValue())));
                         }
                         msgSwitch[0]++;
                         invalidate();
@@ -819,8 +833,8 @@ public class CircleLayout extends View {
                     case 3:
 
                         for (int i = 0; i < bitmaps.size(); i++) {
-                            mBitmapImages.get(i).setNum(mResizeIcon.get(i));
-                            mBitmapImages.get(i).setNumClick(mResizeIconClick.get(i));
+                            mBitmapImages.get(i).setNum(mResizeIcon.get(Integer.parseInt(mBitmapImages.get(i).getBitmapValue())));
+                            mBitmapImages.get(i).setNumClick(mResizeIconClick.get(Integer.parseInt(mBitmapImages.get(i).getBitmapValue())));
                         }
                         msgSwitch[0] = 0;
                         invalidate();
@@ -858,8 +872,10 @@ public class CircleLayout extends View {
         if (strPassword.length() >= minimumPass && strPassword.length() <= maximumPass) {
 
             if (strPassword.contains(loadPassword)) {
+                CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck true ");
                 return true;
             } else {
+                CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck false ");
                 return false;
             }
 
@@ -867,6 +883,11 @@ public class CircleLayout extends View {
             return false;
         }
 
+    }
+
+    private void isVibrator() {
+        Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(500);
     }
 
 }

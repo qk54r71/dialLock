@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +26,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.Activity.LockScreenActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.Activity.SettingActivity"
             android:screenOrientation="portrait"
@@ -43,11 +46,40 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <service android:name=".Activity.Common.ScreenService"></service>
+        <service android:name=".Activity.taskAction.ScreenService"></service>
         <activity
             android:name=".Activity.Activity.LockScreenViewActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver
+            android:name=".Activity.taskAction.RestartReceiver"
+            android:process=".remote">
+            <intent-filter>
+                <action android:name="RestartReceiver.restart" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".Activity.taskAction.BootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".Activity.taskAction.PackageReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+
+        </receiver>
+
 
     </application>
 

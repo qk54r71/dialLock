@@ -18,6 +18,7 @@ import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Common.GMailSender;
 import com.diallock.diallock.diallock.Activity.Common.LockScreenManager;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
+import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
 import com.diallock.diallock.diallock.R;
 
 import java.util.Timer;
@@ -27,14 +28,13 @@ import java.util.TimerTask;
  * 이메일 보내기
  * 출처 : {Link :http://blog.naver.com/PostView.nhn?blogId=junhwen&logNo=130151732452 }
  */
-public class LockScreenViewActivity extends BaseActivity {
+public class LockScreenViewActivity extends BaseActivity implements LockScreenManager.LockStatusListener {
 
     private CircleLayout circleLayout;
     private Boolean backFlag;
     private TextView txt_lock_day;
     private TextView txt_lock_time;
 
-    private static LockScreenViewActivity lockScreenViewActivity;
 
     /**
      * 비밀번호 찾기 버튼
@@ -61,6 +61,7 @@ public class LockScreenViewActivity extends BaseActivity {
 
         setupView(R.layout.activity_lock_screen_view);
         mLockScreeniManager = LockScreenManager.getInstance(LockScreenViewActivity.this); // 한개의 액티비티만 생성 되게 함 싱글톤 방식
+        mLockScreeniManager.setLockStatusListener(this);
         mLockScreeniManager.setLockScreen(LayoutInflater.from(LockScreenViewActivity.this).inflate(R.layout.activity_lock_screen, null));
         mLockScreeniManager.updateActivity(LockScreenViewActivity.this);
         //HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
@@ -76,21 +77,32 @@ public class LockScreenViewActivity extends BaseActivity {
     }
 
     private void init() {
-        lockScreenViewActivity = this;
+
     }
 
+    public void onFinish() {
+        CommonJava.Loging.i(getLocalClassName(), "onFinish()");
+        finish();
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mLockScreeniManager.Lock();
+        CommonJava.Loging.i(getLocalClassName(), "onStart()");
+
+        try {
+            mLockScreeniManager.Lock();
+        } catch (NoLockStatusListenerException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
 
     protected void onDestroy() {
-
-
+        mLockScreeniManager.unLock();
+        mLockScreeniManager.updateActivity(LockScreenViewActivity.this);
+        mLockScreeniManager.timeCancle();
         super.onDestroy();
 
     }
@@ -100,6 +112,7 @@ public class LockScreenViewActivity extends BaseActivity {
 
     protected void onPause() {
 
+        mLockScreeniManager.timeCancle();
 
         super.onPause();
 
@@ -111,19 +124,18 @@ public class LockScreenViewActivity extends BaseActivity {
     protected void onResume() {
 
         super.onResume();
+        mLockScreeniManager.timeStart();
+
+    }
+
+
+    @Override
+    public void onLocked() {
 
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        return false;
-
+    public void onUnlock() {
+        mLockScreeniManager.unLock();
     }
-
-    public void toastFunc() {
-        Toast.makeText(lockScreenViewActivity, "플레이스토어에 등록된 gmail 로 비밀번호가 전송되었습니다.", Toast.LENGTH_SHORT).show();
-    }
-
-
 }

@@ -5,18 +5,24 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
+import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
 import com.diallock.diallock.diallock.R;
 
 import java.lang.ref.WeakReference;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by park on 2016-08-26.
@@ -31,6 +37,9 @@ public class LockScreenManager {
     private WeakReference<WindowManager> mWindowManagerRef;
     private CircleLayout circleLayout;
     private Button btn_cancle;
+    private Timer mTimer;
+    private Handler mHandler = new Handler();
+    private LockStatusListener lockStatusListener;
 
     public static synchronized LockScreenManager getInstance(Activity activity) {
         CommonJava.Loging.i(activity.getLocalClassName(), "getInstance");
@@ -60,6 +69,50 @@ public class LockScreenManager {
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR; // 이 기능임
         layoutParams.flags = 1280;
+
+
+        MainTimerTask timerTask = new MainTimerTask();
+
+        mTimer = new Timer();
+
+        mTimer.schedule(timerTask, 0, 1000);
+    }
+
+
+    class MainTimerTask extends TimerTask {
+
+        public void run() {
+
+            mHandler.post(mUpdateTimeTask);
+
+        }
+
+    }
+
+    private Runnable mUpdateTimeTask = new Runnable() {
+
+        public void run() {
+            String strTxtLockDay =
+                    CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + CommonJava.getDayOfWeek();
+            String strTxtLockTime =
+                    CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
+
+            ((TextView) mLockView.findViewById(R.id.txt_lock_day)).setText(strTxtLockDay);
+            ((TextView) mLockView.findViewById(R.id.txt_lock_time)).setText(strTxtLockTime);
+        }
+
+    };
+
+    public void timeCancle() {
+        mTimer.cancel();
+    }
+
+    public void timeStart() {
+        if (mTimer != null) {
+            MainTimerTask timerTask = new MainTimerTask();
+            mTimer = new Timer();
+            mTimer.schedule(timerTask, 500, 3000);
+        }
     }
 
     public void setLockScreen(View v) {
@@ -96,9 +149,9 @@ public class LockScreenManager {
             public void onClick(View view) {
                 CommonJava.Loging.i(getClass().getName(), "mActivity : " + mActivity);
 
-                ActivityCompat.finishAffinity(mActivity);
-                System.exit(0);
-                mActivity.finish();
+                //ActivityCompat.finishAffinity(mActivity);
+                //System.exit(0);
+                unLock();
             }
         });
 
@@ -106,8 +159,7 @@ public class LockScreenManager {
             @Override
             public void onClick(View view) {
                 startEmailSend();
-
-                ((LockScreenViewActivity) mActivity).toastFunc();
+                startTxtToast();
             }
         });
 
@@ -132,8 +184,14 @@ public class LockScreenManager {
         return windowManager;
     }
 
-    public synchronized void Lock() {
+    public synchronized void Lock() throws NoLockStatusListenerException {
         CommonJava.Loging.i(getClass().getName(), "Lock()");
+
+
+        if (lockStatusListener == null) {
+            throw new NoLockStatusListenerException();
+        }
+
         if (mLockView != null && !mIsLock) {
             if (mIsLock) {
                 getWindowManager().updateViewLayout(mLockView, layoutParams);
@@ -142,11 +200,27 @@ public class LockScreenManager {
                 getWindowManager().addView(mLockView, layoutParams);
                 CommonJava.Loging.i(getClass().getName(), "addView()");
             }
+
+            mIsLock = true;
+            lockStatusListener.onLocked();
+
         }
 
 
         setFindView();
 
+    }
+
+    public synchronized void unLock() {
+        Log.i(getClass().getName(), "unLock()");
+        Log.i(getClass().getName(), "getWindowManager() : " + getWindowManager());
+        Log.i(getClass().getName(), "mIsLock : " + mIsLock);
+        if (getWindowManager() != null && mIsLock) {
+            Log.i(getClass().getName(), "unLock() removeView");
+            getWindowManager().removeView(mLockView);
+            mIsLock = false;
+            mActivity.finish();
+        }
     }
 
     /**
@@ -180,4 +254,32 @@ public class LockScreenManager {
         };
         asyncTask.execute();
     }
+
+    /**
+     * 이메일 발송시 토스트 메시지 2초 동안 보여줌
+     */
+    private void startTxtToast() {
+        ((TextView) mLockView.findViewById(R.id.txt_toast)).setVisibility(View.VISIBLE);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((TextView) mLockView.findViewById(R.id.txt_toast)).setVisibility(View.INVISIBLE);
+            }
+        }, 2000);
+
+
+    }
+
+    public void setLockStatusListener(LockStatusListener listener) {
+        this.lockStatusListener = listener;
+    }
+
+    public interface LockStatusListener {
+        void onLocked();
+
+        void onUnlock();
+    }
+
+
 }

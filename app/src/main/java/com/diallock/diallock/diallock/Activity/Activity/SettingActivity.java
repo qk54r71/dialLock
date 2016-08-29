@@ -3,29 +3,19 @@ package com.diallock.diallock.diallock.Activity.Activity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
-import com.diallock.diallock.diallock.Activity.Common.ScreenService;
+import com.diallock.diallock.diallock.Activity.taskAction.ScreenService;
 import com.diallock.diallock.diallock.R;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -182,14 +172,13 @@ public class SettingActivity extends AppCompatActivity {
             switch (view.getId()) {
                 case R.id.linear_lock:
                     if (lockCheck == false) {
-                        CommonJava.saveSharedPreferences(SettingActivity.this, "lockCheck", "true");
                         linear_lock.setBackgroundResource(R.drawable.btn_click);
                         linear_unlock.setBackgroundResource(R.drawable.btn_bg);
 
-                        Intent intentLockScreen = new Intent(SettingActivity.this, LockScreenViewActivity.class);
+                        Intent intentLockScreen = new Intent(SettingActivity.this, LockScreenActivity.class);
                         intentLockScreen.putExtra("strSwitch", "SettingActivity");
                         startActivity(intentLockScreen);
-                        lockCheck = true;
+                        //lockCheck = true;
                     }
 
                     break;
@@ -286,8 +275,6 @@ public class SettingActivity extends AppCompatActivity {
 
             CommonJava.Loging.i("MainActivity", "onBackPressed() : 종료");
 
-            ActivityCompat.finishAffinity(this);
-            System.exit(0);
             finish();
         } else {
             backFlag = true;

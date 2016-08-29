@@ -72,6 +72,7 @@ public class LockScreenActivity extends AppCompatActivity {
         //homeKeyLoader.lock(this);
 
 
+
     }
 
 
@@ -224,8 +225,6 @@ public class LockScreenActivity extends AppCompatActivity {
 
             CommonJava.Loging.i("MainActivity", "onBackPressed() : 종료");
 
-            ActivityCompat.finishAffinity(this);
-            System.exit(0);
             finish();
         } else {
             backFlag = true;
