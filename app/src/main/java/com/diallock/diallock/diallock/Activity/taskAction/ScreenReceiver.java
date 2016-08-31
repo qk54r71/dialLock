@@ -22,15 +22,18 @@ public class ScreenReceiver extends BroadcastReceiver {
     private KeyguardManager.KeyguardLock keyLock = null;
     private TelephonyManager telephonyManager = null;
     private boolean isPhoneIdle = true;
+    private Boolean mLockCheck = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        CommonJava.Loging.i(getClass().getName(), "onReceive()");
+        CommonJava.Loging.i(getClass().getName(), "context : " + context);
+        CommonJava.Loging.i(getClass().getName(), "intent : " + intent);
 
-        CommonJava.Loging.i(getClass().getName(), "onReceive() context : " + context);
-        CommonJava.Loging.i(getClass().getName(), "onReceive() intent : " + intent);
-
+        isLockCheck(context);
 
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+            CommonJava.Loging.i(getClass().getName(), "ACTION_SCREEN_OFF");
             if (km == null)
 
                 km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
@@ -45,13 +48,14 @@ public class ScreenReceiver extends BroadcastReceiver {
                 }
 
 
-            if (isPhoneIdle) {
+            if (isPhoneIdle && mLockCheck) {
+                CommonJava.Loging.i(getClass().getName(), "isPhoneIdle && mLockCheck Lock start");
                 keyLock = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
                 disableKeyguard();
 
                 Intent intentLockScreenView = new Intent(context, LockScreenViewActivity.class);
                 intentLockScreenView.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intentLockScreenView.putExtra("strSwitch","ScreenReceiver");
+                intentLockScreenView.putExtra("strSwitch", "ScreenReceiver");
                 context.startActivity(intentLockScreenView);
             }
 
@@ -100,6 +104,10 @@ public class ScreenReceiver extends BroadcastReceiver {
         }
 
     };
+
+    private void isLockCheck(Context context) {
+        mLockCheck = Boolean.valueOf(CommonJava.loadSharedPreferences(context, "lockCheck"));
+    }
 
 
 }

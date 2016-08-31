@@ -49,6 +49,9 @@ public class SettingActivity extends AppCompatActivity {
         setOnClick();
     }
 
+    /**
+     * 저장된 패스워드가 없으면 패드워드 설정 창으로 이동
+     */
     private void loadPassword() {
         String password = CommonJava.loadSharedPreferences(SettingActivity.this, "password");
         CommonJava.Loging.i("SettingActivity", "password : " + password);
@@ -57,6 +60,7 @@ public class SettingActivity extends AppCompatActivity {
             Intent intentSetPassword = new Intent(SettingActivity.this, PasswordChangeActivity.class);
             intentSetPassword.putExtra("strSwitch", "veryfirst");
             startActivity(intentSetPassword);
+            finish();
 
         }
 
@@ -359,5 +363,44 @@ public class SettingActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        CommonJava.Loging.i(getLocalClassName(), "onRestart()");
 
+        /*lockCheck = Boolean.valueOf(CommonJava.loadSharedPreferences(SettingActivity.this, "lockCheck"));
+        CommonJava.Loging.i(getLocalClassName(), "lockCheck : " + lockCheck);
+
+        if (lockCheck) {
+            linear_lock.setBackgroundResource(R.drawable.btn_click);
+            linear_unlock.setBackgroundResource(R.drawable.btn_bg);
+
+            Intent intentStopService = new Intent(SettingActivity.this, ScreenService.class);
+            stopService(intentStopService);
+            System.exit(0);
+        } else {
+            linear_lock.setBackgroundResource(R.drawable.btn_bg);
+            linear_unlock.setBackgroundResource(R.drawable.btn_click);
+        }*/
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonJava.Loging.i(getLocalClassName(), "onResume()");
+
+        lockCheck = Boolean.valueOf(CommonJava.loadSharedPreferences(SettingActivity.this, "lockCheck"));
+        CommonJava.Loging.i(getLocalClassName(), "lockCheck : " + lockCheck);
+
+        if (lockCheck) {
+            linear_lock.setBackgroundResource(R.drawable.btn_click);
+            linear_unlock.setBackgroundResource(R.drawable.btn_bg);
+        } else {
+            linear_lock.setBackgroundResource(R.drawable.btn_bg);
+            linear_unlock.setBackgroundResource(R.drawable.btn_click);
+        }
+
+
+    }
 }

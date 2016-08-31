@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity;
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Activity.SettingActivity;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
@@ -139,7 +140,7 @@ public class CircleLayout extends View {
 
     private void init() {
 
-        bitmapImageListInit();
+        bitmapImageListShuffle();
 
         String centerStrImgUrl = CommonJava.loadSharedPreferences(mContext, "imgUrl");
 
@@ -365,7 +366,6 @@ public class CircleLayout extends View {
 
                 bitmapImageListShuffle();
                 invalidate();
-                isVibrator();
 
             }
         }
@@ -415,7 +415,6 @@ public class CircleLayout extends View {
                         bitmapImageListShuffle();
                         invalidate();
                     }
-                    isVibrator();
 
 
                 }
@@ -461,14 +460,15 @@ public class CircleLayout extends View {
 
                 String strSwitch = ((Activity) mContext).getIntent().getStringExtra("strSwitch");
                 if (strSwitch != null && strSwitch.equals("SettingActivity")) {
-                    ((Activity) mContext).finish();
 
                     CommonJava.saveSharedPreferences(mContext, "lockCheck", "true");
 
                     CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd ScreenService start");
                     Intent intentStopService = new Intent(mContext, ScreenService.class);
                     mContext.startService(intentStopService);
-                } else if(strSwitch != null && strSwitch.equals("ScreenReceiver")){
+
+                    ((Activity) mContext).finish();
+                } else if (strSwitch != null && strSwitch.equals("ScreenReceiver")) {
                     ((LockScreenViewActivity) mContext).onUnlock();
                 }
             } else {
@@ -819,6 +819,7 @@ public class CircleLayout extends View {
                         invalidate();
                         msgSwitch[0]++;
                         handlerError.sendEmptyMessageDelayed(0, 500);
+                        isVibrator();
                         break;
                     case 1:
 
@@ -851,7 +852,6 @@ public class CircleLayout extends View {
         };
 
         handlerError.sendEmptyMessageDelayed(0, 500);
-
 
     }
 
@@ -887,7 +887,7 @@ public class CircleLayout extends View {
 
     private void isVibrator() {
         Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(500);
+        vibrator.vibrate(100);
     }
 
 }

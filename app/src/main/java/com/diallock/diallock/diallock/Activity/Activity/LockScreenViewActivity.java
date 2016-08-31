@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Common.GMailSender;
+import com.diallock.diallock.diallock.Activity.Common.HomeKeyLocker;
 import com.diallock.diallock.diallock.Activity.Common.LockScreenManager;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
@@ -64,9 +65,10 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
         mLockScreeniManager.setLockStatusListener(this);
         mLockScreeniManager.setLockScreen(LayoutInflater.from(LockScreenViewActivity.this).inflate(R.layout.activity_lock_screen, null));
         mLockScreeniManager.updateActivity(LockScreenViewActivity.this);
-        //HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
 
-        //homeKeyLoader.lock(this);
+        HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
+        homeKeyLoader.lock(this);
+
         init();
 
     }

@@ -75,13 +75,14 @@ public class ScreenService extends Service {
                     IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 
                     registerReceiver(mReceiver, filter);
+                    CommonJava.Loging.i(getClass().getName(), "registerReceiver()");
 
-
+                    /*
                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
                     Notification notification = new Notification(R.drawable.dial_icon, "서비스 실행됨", System.currentTimeMillis());
 
-                    startForeground(1, notification);
+                    startForeground(1, notification);*/
 
                 }
 

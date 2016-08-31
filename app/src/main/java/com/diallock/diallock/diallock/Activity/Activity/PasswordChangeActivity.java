@@ -34,6 +34,8 @@ public class PasswordChangeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_change);
 
+        CommonJava.Loging.i(getLocalClassName(), "onCreate()");
+
         setFindView();
         init();
         setOnClick();
@@ -55,7 +57,7 @@ public class PasswordChangeActivity extends AppCompatActivity {
 
         switch (strSwitch) {
             case "veryfirst":
-                pass_btn_cancle.setEnabled(false);
+                pass_btn_ok.setEnabled(false);
                 break;
             case "first":
                 strSwitch = "first";
@@ -74,6 +76,10 @@ public class PasswordChangeActivity extends AppCompatActivity {
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+
+            CommonJava.Loging.i(getLocalClassName(), "onClick()");
+            CommonJava.Loging.i(getLocalClassName(), "view.getId() : " + view.getId());
+
             switch (view.getId()) {
                 case R.id.pass_btn_cancle:
 
@@ -85,6 +91,8 @@ public class PasswordChangeActivity extends AppCompatActivity {
                         pass_txt_lock.setText(passNumber);
 
                         pass_btn_cancle.setText("취소");
+
+                        pass_btn_ok.setEnabled(false);
                     } else {
                         finish();
                     }
@@ -92,9 +100,14 @@ public class PasswordChangeActivity extends AppCompatActivity {
                     break;
                 case R.id.pass_btn_ok:
 
+                    CommonJava.Loging.i(getLocalClassName(), "pass_btn_ok()");
+                    CommonJava.Loging.i(getLocalClassName(), "passProgress : " + passProgress);
+                    CommonJava.Loging.i(getLocalClassName(), "isPasswordLangth() : " + isPasswordLangth());
+
                     if (passProgress && isPasswordLangth()) {
 
                         switch (strSwitch) {
+                            case "veryfirst":
                             case "first":
                                 Intent intentSettingFirst = new Intent(PasswordChangeActivity.this, PasswordChangeActivity.class);
                                 intentSettingFirst.putExtra("strSwitch", "second");
@@ -120,6 +133,8 @@ public class PasswordChangeActivity extends AppCompatActivity {
                                     Intent intentSettingSecond = new Intent(PasswordChangeActivity.this, SettingActivity.class);
                                     startActivity(intentSettingSecond);
                                     finish();
+
+                                    Toast.makeText(getApplicationContext(), "패스워드 설정이 완료 되었습니다.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "전 단계의 패스워드와 맞지 않습니다.", Toast.LENGTH_SHORT).show();
                                 }
@@ -187,6 +202,7 @@ public class PasswordChangeActivity extends AppCompatActivity {
         pass_txt_lock.setText(passNumber);
 
         pass_btn_cancle.setText("다시하기");
+        pass_btn_ok.setEnabled(true);
 
     }
 

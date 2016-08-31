@@ -93,7 +93,7 @@ public class LockScreenManager {
 
         public void run() {
             String strTxtLockDay =
-                    CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + CommonJava.getDayOfWeek();
+                    CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + (CommonJava.getDayOfWeek().contains("요일") ? CommonJava.getDayOfWeek():CommonJava.getDayOfWeek()+"일");
             String strTxtLockTime =
                     CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
 
