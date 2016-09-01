@@ -18,16 +18,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity;
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
-import com.diallock.diallock.diallock.Activity.Activity.SettingActivity;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Common.LockScreenManager;
 import com.diallock.diallock.diallock.Activity.taskAction.ScreenService;
@@ -110,7 +106,7 @@ public class CircleLayout extends View {
      */
     private Handler handlerError;
     private Boolean errorDrowBl;
-    private LockScreenManager mLockScreeniManager;
+    private LockScreenManager mLockScreenManager;
 
 
     public CircleLayout(Context context) {
@@ -464,8 +460,8 @@ public class CircleLayout extends View {
                     CommonJava.saveSharedPreferences(mContext, "lockCheck", "true");
 
                     CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd ScreenService start");
-                    Intent intentStopService = new Intent(mContext, ScreenService.class);
-                    mContext.startService(intentStopService);
+                    Intent intentStartService = new Intent(mContext, ScreenService.class);
+                    mContext.startService(intentStartService);
 
                     ((Activity) mContext).finish();
                 } else if (strSwitch != null && strSwitch.equals("ScreenReceiver")) {
@@ -830,6 +826,11 @@ public class CircleLayout extends View {
                         msgSwitch[0]++;
                         invalidate();
                         handlerError.sendEmptyMessageDelayed(0, 500);
+
+                        if (mContext instanceof LockScreenViewActivity) {
+                            mLockScreenManager = LockScreenManager.getInstance((Activity) mContext);
+                            mLockScreenManager.startTxtToast("잘못된 비밀번호 입니다.");
+                        }
                         break;
                     case 3:
 

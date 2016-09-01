@@ -66,8 +66,8 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
         mLockScreeniManager.setLockScreen(LayoutInflater.from(LockScreenViewActivity.this).inflate(R.layout.activity_lock_screen, null));
         mLockScreeniManager.updateActivity(LockScreenViewActivity.this);
 
-        HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
-        homeKeyLoader.lock(this);
+       /* HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
+        homeKeyLoader.lock(this);*/
 
         init();
 

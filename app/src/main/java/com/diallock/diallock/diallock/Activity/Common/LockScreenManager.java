@@ -93,7 +93,7 @@ public class LockScreenManager {
 
         public void run() {
             String strTxtLockDay =
-                    CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + (CommonJava.getDayOfWeek().contains("요일") ? CommonJava.getDayOfWeek():CommonJava.getDayOfWeek()+"일");
+                    CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + (CommonJava.getDayOfWeek().contains("요일") ? CommonJava.getDayOfWeek() : CommonJava.getDayOfWeek() + "일");
             String strTxtLockTime =
                     CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
 
@@ -159,7 +159,7 @@ public class LockScreenManager {
             @Override
             public void onClick(View view) {
                 startEmailSend();
-                startTxtToast();
+                startTxtToast("플레이스토어에 등록된 이메일로 패스워드가 발송됩니다.");
             }
         });
 
@@ -217,6 +217,10 @@ public class LockScreenManager {
         Log.i(getClass().getName(), "mIsLock : " + mIsLock);
         if (getWindowManager() != null && mIsLock) {
             Log.i(getClass().getName(), "unLock() removeView");
+/*
+            layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            getWindowManager().removeView(mLockView);
+            getWindowManager().addView(mLockView, layoutParams);*/
             getWindowManager().removeView(mLockView);
             mIsLock = false;
             mActivity.finish();
@@ -256,9 +260,10 @@ public class LockScreenManager {
     }
 
     /**
-     * 이메일 발송시 토스트 메시지 2초 동안 보여줌
+     * 이메일 발송시 토스트 메시지 3초 동안 보여줌
      */
-    private void startTxtToast() {
+    public void startTxtToast(String strMsg) {
+        ((TextView) mLockView.findViewById(R.id.txt_toast)).setText(strMsg);
         ((TextView) mLockView.findViewById(R.id.txt_toast)).setVisibility(View.VISIBLE);
 
         new Handler().postDelayed(new Runnable() {
@@ -266,7 +271,7 @@ public class LockScreenManager {
             public void run() {
                 ((TextView) mLockView.findViewById(R.id.txt_toast)).setVisibility(View.INVISIBLE);
             }
-        }, 2000);
+        }, 3000);
 
 
     }

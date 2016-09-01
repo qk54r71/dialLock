@@ -158,7 +158,7 @@ public class PasswordChangeActivity extends AppCompatActivity {
         int passwordLangth = strPassword.length();
 
         int minimumPass = 2;
-        int maximumPass = 6;
+        int maximumPass = 4;
 
         if (passwordLangth >= minimumPass && passwordLangth <= maximumPass) {
             return true;

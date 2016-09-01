@@ -1,16 +1,19 @@
 package com.diallock.diallock.diallock.Activity.taskAction;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 
+import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.R;
 
@@ -22,6 +25,10 @@ public class ScreenService extends Service {
 
     private ScreenReceiver mReceiver = null;
     private PackageReceiver pReceiver;
+    private RestartReceiver rReceiver;
+    private Boolean mLockCheck = false;
+    private NotificationManager mNotificationManager;
+    private int mStartId;
 
 
     @Override
@@ -52,21 +59,57 @@ public class ScreenService extends Service {
         pFilter.addDataScheme("package");
         registerReceiver(pReceiver, pFilter);
 
+        rReceiver = new RestartReceiver();
+        IntentFilter rFilter = new IntentFilter(RestartReceiver.ACTION_RESTART_SERVICE);
+        rFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
+        registerReceiver(rReceiver, rFilter);
+
+
+        mLockCheck = Boolean.valueOf(CommonJava.loadSharedPreferences(getApplicationContext(), "lockCheck"));
+
     }
 
 
     @Override
-
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         super.onStartCommand(intent, flags, startId);
 
-
         CommonJava.Loging.i(getClass().getName(), "onStartCommand()");
+        mStartId = startId;
+        CommonJava.Loging.i(getClass().getName(), "mStartId : " + mStartId);
+
 
         if (intent != null) {
 
             if (intent.getAction() == null) {
+                CommonJava.Loging.i(getClass().getName(), "intent.getAction() :" + intent.getAction());
+                CommonJava.Loging.i(getClass().getName(), "mLockCheck :" + mLockCheck);
+
+                if (mLockCheck && mNotificationManager == null) {
+                    mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                    startForeground(1, new Notification());
+
+                    Notification notification;
+
+                    CommonJava.Loging.i(getClass().getName(), "Build.VERSION.SDK_INT : " + Build.VERSION.SDK_INT);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        CommonJava.Loging.i(getClass().getName(), "JELLY_BEAN  Custom Noti");
+
+                        notification = new Notification.Builder(getApplicationContext())
+                                .setSmallIcon(R.drawable.dial_icon)
+                                .setContentTitle("DialLock")
+                                .setContentText("잠금화면이 실행중입니다.")
+                                .build();
+
+                        mNotificationManager.notify(startId, notification);
+                        mNotificationManager.cancel(startId);
+
+                    }
+
+                }
 
                 if (mReceiver == null) {
 
@@ -76,13 +119,6 @@ public class ScreenService extends Service {
 
                     registerReceiver(mReceiver, filter);
                     CommonJava.Loging.i(getClass().getName(), "registerReceiver()");
-
-                    /*
-                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-                    Notification notification = new Notification(R.drawable.dial_icon, "서비스 실행됨", System.currentTimeMillis());
-
-                    startForeground(1, notification);*/
 
                 }
 
@@ -111,7 +147,6 @@ public class ScreenService extends Service {
         if (pReceiver != null) {
             unregisterReceiver(pReceiver);
         }
-
 
     }
 

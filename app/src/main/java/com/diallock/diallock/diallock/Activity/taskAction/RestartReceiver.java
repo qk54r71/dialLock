@@ -23,9 +23,19 @@ public class RestartReceiver extends BroadcastReceiver {
 
         if (intent.getAction().equals(ACTION_RESTART_SERVICE)) {
 
-            Intent i = new Intent(context, ScreenService.class);
+            Intent intentScreenReStart = new Intent(context, ScreenService.class);
 
-            context.startService(i);
+            context.startService(intentScreenReStart);
+
+        }
+
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+
+            CommonJava.Loging.i(getClass().getName(), "ACTION_BOOT_COMPLETED ");
+
+            Intent intentScreenBoot = new Intent(context, ScreenService.class);
+
+            context.startService(intentScreenBoot);
 
         }
 
