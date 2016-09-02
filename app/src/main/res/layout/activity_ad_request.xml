@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.diallock.diallock.diallock.Activity.Activity.AdRequestActivity"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이름 : 박성훈 (이사)"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="핸드폰 : 010-2090-2513"
+        android:id="@+id/textView12"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이메일 : geogot@naver.com"
+        android:id="@+id/textView13"
+        android:textColor="#000000"
+        android:textSize="25dp"
+        android:layout_marginTop="10dp" />
+</LinearLayout>

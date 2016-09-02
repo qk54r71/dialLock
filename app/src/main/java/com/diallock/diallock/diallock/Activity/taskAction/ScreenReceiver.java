@@ -1,15 +1,19 @@
 package com.diallock.diallock.diallock.Activity.taskAction;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity;
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Common.LockScreenManager;
 
 /**
  * Created by park on 2016-08-22.
@@ -23,6 +27,10 @@ public class ScreenReceiver extends BroadcastReceiver {
     private TelephonyManager telephonyManager = null;
     private boolean isPhoneIdle = true;
     private Boolean mLockCheck = false;
+    private Context mContext;
+    private Boolean mPhoneState = false;
+    private int mTimeCheck = 0;
+    private Handler handler = new Handler();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -31,6 +39,11 @@ public class ScreenReceiver extends BroadcastReceiver {
         CommonJava.Loging.i(getClass().getName(), "intent : " + intent);
 
         isLockCheck(context);
+        mContext = context;
+        if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+            CommonJava.Loging.i(getClass().getName(), "ACTION_SCREEN_ON");
+            handler.removeCallbacks(startActivity);
+        }
 
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
             CommonJava.Loging.i(getClass().getName(), "ACTION_SCREEN_OFF");
@@ -50,13 +63,8 @@ public class ScreenReceiver extends BroadcastReceiver {
 
             if (isPhoneIdle && mLockCheck) {
                 CommonJava.Loging.i(getClass().getName(), "isPhoneIdle && mLockCheck Lock start");
-                keyLock = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
-                disableKeyguard();
 
-                Intent intentLockScreenView = new Intent(context, LockScreenViewActivity.class);
-                intentLockScreenView.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intentLockScreenView.putExtra("strSwitch", "ScreenReceiver");
-                context.startActivity(intentLockScreenView);
+                handler.postDelayed(startActivity, 2000);
             }
 
         }
@@ -90,14 +98,49 @@ public class ScreenReceiver extends BroadcastReceiver {
             switch (state) {
                 case TelephonyManager.CALL_STATE_IDLE:
                     isPhoneIdle = true;
+                    if (mPhoneState) {
+                        CommonJava.Loging.i(getClass().getName(), "mPhoneState Lock start");
+                        keyLock = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
+                        disableKeyguard();
+
+                        Intent intentLockScreenView = new Intent(mContext, LockScreenViewActivity.class);
+                        intentLockScreenView.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intentLockScreenView.putExtra("strSwitch", "ScreenReceiver");
+                        mContext.startActivity(intentLockScreenView);
+                        mPhoneState = false;
+                    }
+
                     break;
 
                 case TelephonyManager.CALL_STATE_RINGING:
                     isPhoneIdle = false;
+
+                    if (mContext != null) {
+                        isLockCheck(mContext);
+                        if (mLockCheck && LockScreenViewActivity.mLockScreenViewActivity != null) {
+                            CommonJava.Loging.i(getClass().getName(), "mLockScreenViewActivity finish()");
+                            mPhoneState = true;
+                            LockScreenViewActivity.mLockScreenViewActivity.finish();
+                        }
+                    }
+
                     break;
 
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     isPhoneIdle = false;
+
+                    if (mPhoneState) {
+                        CommonJava.Loging.i(getClass().getName(), "mPhoneState Lock start");
+                        keyLock = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
+                        disableKeyguard();
+
+                        Intent intentLockScreenView = new Intent(mContext, LockScreenViewActivity.class);
+                        intentLockScreenView.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intentLockScreenView.putExtra("strSwitch", "ScreenReceiver");
+                        mContext.startActivity(intentLockScreenView);
+                        mPhoneState = false;
+                    }
+
                     break;
             }
 
@@ -109,5 +152,18 @@ public class ScreenReceiver extends BroadcastReceiver {
         mLockCheck = Boolean.valueOf(CommonJava.loadSharedPreferences(context, "lockCheck"));
     }
 
+    private Runnable startActivity = new Runnable() {
+        @Override
+        public void run() {
+            CommonJava.Loging.i(getClass().getName(), "isPhoneIdle && mLockCheck Lock start 2초");
+            keyLock = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
+            disableKeyguard();
 
+            Intent intentLockScreenView = new Intent(mContext, LockScreenViewActivity.class);
+            intentLockScreenView.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intentLockScreenView.putExtra("strSwitch", "ScreenReceiver");
+            mContext.startActivity(intentLockScreenView);
+
+        }
+    };
 }

@@ -80,7 +80,6 @@ public class LockScreenActivity extends AppCompatActivity {
         txt_lock_day = (TextView) findViewById(R.id.txt_lock_day);
         txt_lock_time = (TextView) findViewById(R.id.txt_lock_time);
 
-        btn_cancle = (Button) findViewById(R.id.btn_cancle); // test용
     }
 
     private void init() {
@@ -129,8 +128,6 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private void setOnClick() {
         btn_find_pass.setOnClickListener(onClickListener);
-
-        btn_cancle.setOnClickListener(onClickListener); // test용
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -143,9 +140,6 @@ public class LockScreenActivity extends AppCompatActivity {
 
                     Toast.makeText(LockScreenActivity.this, "플레이스토어에 등록된 gmail 로 비밀번호가 전송되었습니다.", Toast.LENGTH_SHORT).show();
 
-                    break;
-                case R.id.btn_cancle: // test용
-                    finish();
                     break;
             }
         }

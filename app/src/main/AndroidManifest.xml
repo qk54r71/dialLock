@@ -34,6 +34,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,13 +45,14 @@
         <activity
             android:name=".Activity.Activity.EmailChangeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".Activity.taskAction.ScreenService"></service>
+        <service android:name=".Activity.taskAction.ScreenService" />
+
         <activity
             android:name=".Activity.Activity.LockScreenViewActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
@@ -61,7 +63,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".Activity.taskAction.BootReceiver"
             android:enabled="true"
@@ -78,10 +79,12 @@
 
                 <data android:scheme="package" />
             </intent-filter>
-
         </receiver>
 
-
+        <activity
+            android:name=".Activity.Activity.AdRequestActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

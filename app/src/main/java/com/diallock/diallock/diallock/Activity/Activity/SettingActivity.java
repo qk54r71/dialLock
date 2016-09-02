@@ -222,6 +222,10 @@ public class SettingActivity extends AppCompatActivity {
 
                     break;
                 case R.id.linear_ad:
+
+                    Intent intentAdRequest = new Intent(SettingActivity.this, AdRequestActivity.class);
+                    startActivity(intentAdRequest);
+
                     break;
             }
 
@@ -356,6 +360,8 @@ public class SettingActivity extends AppCompatActivity {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     if (!Settings.canDrawOverlays(this)) {
                         finish();
+                    }else{
+                        loadPassword();
                     }
                 }
                 break;

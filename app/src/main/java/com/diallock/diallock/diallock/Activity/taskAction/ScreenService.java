@@ -49,6 +49,7 @@ public class ScreenService extends Service {
 
         mReceiver = new ScreenReceiver();
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(mReceiver, filter);
 
 

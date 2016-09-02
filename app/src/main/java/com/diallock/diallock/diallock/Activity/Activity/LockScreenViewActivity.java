@@ -1,5 +1,6 @@
 package com.diallock.diallock.diallock.Activity.Activity;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import com.diallock.diallock.diallock.Activity.Common.HomeKeyLocker;
 import com.diallock.diallock.diallock.Activity.Common.LockScreenManager;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
+import com.diallock.diallock.diallock.Activity.taskAction.ScreenReceiver;
 import com.diallock.diallock.diallock.R;
 
 import java.util.Timer;
@@ -29,7 +31,7 @@ import java.util.TimerTask;
  * 이메일 보내기
  * 출처 : {Link :http://blog.naver.com/PostView.nhn?blogId=junhwen&logNo=130151732452 }
  */
-public class LockScreenViewActivity extends BaseActivity implements LockScreenManager.LockStatusListener {
+public class LockScreenViewActivity extends BaseActivity implements LockScreenManager.LockStatusListener{
 
     private CircleLayout circleLayout;
     private Boolean backFlag;
@@ -49,6 +51,8 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
     private Button btn_cancle;
     private LockScreenManager mLockScreeniManager;
 
+    public static Activity mLockScreenViewActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().addFlags(
@@ -58,6 +62,7 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
         super.onCreate(savedInstanceState);
 
         CommonJava.Loging.i("LockScreenActivity", "onCreate()");
+
 
 
         setupView(R.layout.activity_lock_screen_view);
@@ -79,7 +84,7 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
     }
 
     private void init() {
-
+        mLockScreenViewActivity = this;
     }
 
     public void onFinish() {

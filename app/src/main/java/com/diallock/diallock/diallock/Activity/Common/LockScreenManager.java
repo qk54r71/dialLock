@@ -144,17 +144,6 @@ public class LockScreenManager {
             }
         });
 
-        mLockView.findViewById(R.id.btn_cancle).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CommonJava.Loging.i(getClass().getName(), "mActivity : " + mActivity);
-
-                //ActivityCompat.finishAffinity(mActivity);
-                //System.exit(0);
-                unLock();
-            }
-        });
-
         mLockView.findViewById(R.id.btn_find_pass).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
