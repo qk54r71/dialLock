@@ -260,7 +260,7 @@ public class LockScreenManager {
             public void run() {
                 ((TextView) mLockView.findViewById(R.id.txt_toast)).setVisibility(View.INVISIBLE);
             }
-        }, 3000);
+        }, 2000);
 
 
     }

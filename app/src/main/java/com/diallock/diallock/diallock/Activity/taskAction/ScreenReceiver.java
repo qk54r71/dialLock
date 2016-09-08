@@ -42,7 +42,7 @@ public class ScreenReceiver extends BroadcastReceiver {
         mContext = context;
         if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
             CommonJava.Loging.i(getClass().getName(), "ACTION_SCREEN_ON");
-            handler.removeCallbacks(startActivity);
+            //handler.removeCallbacks(startActivity);
         }
 
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
@@ -64,7 +64,8 @@ public class ScreenReceiver extends BroadcastReceiver {
             if (isPhoneIdle && mLockCheck) {
                 CommonJava.Loging.i(getClass().getName(), "isPhoneIdle && mLockCheck Lock start");
 
-                handler.postDelayed(startActivity, 2000);
+                //handler.postDelayed(startActivity, 2000);
+                handler.post(startActivity);
             }
 
         }
@@ -98,7 +99,7 @@ public class ScreenReceiver extends BroadcastReceiver {
             switch (state) {
                 case TelephonyManager.CALL_STATE_IDLE:
                     isPhoneIdle = true;
-                    if (mPhoneState) {
+                    if (mPhoneState && ScreenService.mPhoneProgressLock) {
                         CommonJava.Loging.i(getClass().getName(), "mPhoneState Lock start");
                         keyLock = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
                         disableKeyguard();
@@ -129,7 +130,7 @@ public class ScreenReceiver extends BroadcastReceiver {
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     isPhoneIdle = false;
 
-                    if (mPhoneState) {
+                    if (mPhoneState && ScreenService.mPhoneProgressLock) {
                         CommonJava.Loging.i(getClass().getName(), "mPhoneState Lock start");
                         keyLock = km.newKeyguardLock(Context.KEYGUARD_SERVICE);
                         disableKeyguard();
@@ -163,6 +164,8 @@ public class ScreenReceiver extends BroadcastReceiver {
             intentLockScreenView.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intentLockScreenView.putExtra("strSwitch", "ScreenReceiver");
             mContext.startActivity(intentLockScreenView);
+
+            ScreenService.mPhoneProgressLock = true;
 
         }
     };

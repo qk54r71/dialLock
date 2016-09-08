@@ -22,6 +22,7 @@ import com.diallock.diallock.diallock.R;
  */
 public class ScreenService extends Service {
 
+    public static Boolean mPhoneProgressLock = false;
 
     private ScreenReceiver mReceiver = null;
     private PackageReceiver pReceiver;
@@ -101,7 +102,7 @@ public class ScreenService extends Service {
 
                         notification = new Notification.Builder(getApplicationContext())
                                 .setSmallIcon(R.drawable.dial_icon)
-                                .setContentTitle("DialLock")
+                                .setContentTitle("다이얼락")
                                 .setContentText("잠금화면이 실행중입니다.")
                                 .build();
 

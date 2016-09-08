@@ -193,7 +193,6 @@ public class PasswordChangeActivity extends AppCompatActivity {
     public void onBtnClick(String btnValue) {
         CommonJava.Loging.i("PasswordChange", "btnValue : " + btnValue);
         passProgress = true;
-
         if (passNumber != null) {
             passNumber += btnValue;
         } else {

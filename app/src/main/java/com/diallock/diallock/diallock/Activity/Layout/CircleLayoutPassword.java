@@ -11,6 +11,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.View;
@@ -241,7 +242,7 @@ public class CircleLayoutPassword extends View {
         /**
          * 가운에 화면에 이미지 넣기
          */
-        Bitmap centerImg = getCircleBitmap(mCenterBitmapImg, mInnerRadius/2);
+        Bitmap centerImg = getCircleBitmap(mCenterBitmapImg, mInnerRadius / 2);
         canvas.drawBitmap(centerImg, width / 2 - centerImg.getWidth() / 2, height / 2 - centerImg.getHeight() / 2, null);
 
 
@@ -319,10 +320,11 @@ public class CircleLayoutPassword extends View {
             String btnValue = isImageInnerValue(xLocation, yLocation);
 
             passwordChangeActivity.onBtnClick(btnValue);
-
             mDialImageInfo.setCurrentClickBitmapImageIndex(isImageInnerIndex);
             //bitmapImageListShuffle();
             invalidate();
+
+            isVibrator();
 
         }
 
@@ -638,5 +640,12 @@ public class CircleLayoutPassword extends View {
 
     }
 
+    /**
+     * 진동을 주는 함수
+     */
+    private void isVibrator() {
+        Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(100);
+    }
 
 }

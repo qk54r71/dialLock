@@ -51,14 +51,15 @@
 
             <Button
                 android:id="@+id/btn_find_pass"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_gravity="right"
                 android:background="@drawable/password_find"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp" />
 
         </RelativeLayout>
     </LinearLayout>

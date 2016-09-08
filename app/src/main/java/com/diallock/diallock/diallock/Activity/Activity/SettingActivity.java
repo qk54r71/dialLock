@@ -175,7 +175,11 @@ public class SettingActivity extends AppCompatActivity {
 
             switch (view.getId()) {
                 case R.id.linear_lock:
-                    if (lockCheck == false) {
+                    String password = CommonJava.loadSharedPreferences(SettingActivity.this, "password");
+                    if (password.isEmpty()) {
+                        loadPassword();
+                    } else if (lockCheck == false) {
+
                         linear_lock.setBackgroundResource(R.drawable.btn_click);
                         linear_unlock.setBackgroundResource(R.drawable.btn_bg);
 
@@ -360,7 +364,7 @@ public class SettingActivity extends AppCompatActivity {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     if (!Settings.canDrawOverlays(this)) {
                         finish();
-                    }else{
+                    } else {
                         loadPassword();
                     }
                 }

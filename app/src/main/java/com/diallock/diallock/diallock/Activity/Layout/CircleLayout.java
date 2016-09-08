@@ -362,6 +362,7 @@ public class CircleLayout extends View {
 
                 bitmapImageListShuffle();
                 invalidate();
+                isVibrator();
 
             }
         }
@@ -410,6 +411,7 @@ public class CircleLayout extends View {
 
                         bitmapImageListShuffle();
                         invalidate();
+                        isVibrator();
                     }
 
 
@@ -442,6 +444,7 @@ public class CircleLayout extends View {
             mDialImageInfo.initDialImageInfo();
             bitmapImageListShuffle();
             invalidate();
+            isVibrator();
 
             String loadPassword = CommonJava.loadSharedPreferences(mContext, "password");
 
@@ -466,6 +469,7 @@ public class CircleLayout extends View {
                     ((Activity) mContext).finish();
                 } else if (strSwitch != null && strSwitch.equals("ScreenReceiver")) {
                     ((LockScreenViewActivity) mContext).onUnlock();
+                    ScreenService.mPhoneProgressLock = false;
                 }
             } else {
                 if (errorDrowBl == false) {
@@ -814,7 +818,7 @@ public class CircleLayout extends View {
                         }
                         invalidate();
                         msgSwitch[0]++;
-                        handlerError.sendEmptyMessageDelayed(0, 500);
+                        handlerError.sendEmptyMessageDelayed(0, 200);
                         isVibrator();
                         break;
                     case 1:
@@ -825,7 +829,7 @@ public class CircleLayout extends View {
                         }
                         msgSwitch[0]++;
                         invalidate();
-                        handlerError.sendEmptyMessageDelayed(0, 500);
+                        handlerError.sendEmptyMessageDelayed(0, 200);
 
                         if (mContext instanceof LockScreenViewActivity) {
                             mLockScreenManager = LockScreenManager.getInstance((Activity) mContext);
@@ -852,7 +856,7 @@ public class CircleLayout extends View {
             }
         };
 
-        handlerError.sendEmptyMessageDelayed(0, 500);
+        handlerError.sendEmptyMessageDelayed(0, 200);
 
     }
 
