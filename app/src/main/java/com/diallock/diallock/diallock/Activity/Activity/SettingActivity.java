@@ -14,8 +14,16 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Common.DBManageMent;
 import com.diallock.diallock.diallock.Activity.taskAction.ScreenService;
 import com.diallock.diallock.diallock.R;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -32,6 +40,8 @@ public class SettingActivity extends AppCompatActivity {
     final int REQ_CODE_SELECT_IMAGE = 100;
     private final static int PERMISSIONS_REQ_NUM = 6242;
 
+    private DBManageMent dbManageMent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +57,7 @@ public class SettingActivity extends AppCompatActivity {
         setFindView();
         init();
         setOnClick();
+        copyExcelDataToDatabase();
     }
 
     /**
@@ -412,5 +423,93 @@ public class SettingActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    /**
+     * assets 폴더에 존재하는 엑셀 파일을 db 에 넣음
+     */
+    private void copyExcelDataToDatabase() {
+
+        dbManageMent = new DBManageMent(SettingActivity.this);
+        dbManageMent.delete();
+
+        CommonJava.Loging.i("CustomKey", "copyExcelDataToDatabase()");
+
+        Workbook workbook = null;
+        Sheet sheet = null;
+
+        try {
+            InputStream is = getBaseContext().getResources().getAssets().open("festival.xls");
+
+            try {
+                workbook = workbook.getWorkbook(is);
+
+                if (workbook != null) {
+                    sheet = workbook.getSheet(0);
+
+                    if (sheet != null) {
+
+                        int nMaxColumn = 6;
+                        int nRowStartIndex = 1;
+                        int nRowEndIndex = sheet.getColumn(nMaxColumn - 1).length - 1;
+                        int nColumnStartIndex = 0;
+                        int nColumnEndIndex = sheet.getRow(2).length - 1;
+                        dbManageMent.open();
+
+                        for (int nRow = nRowStartIndex; nRow <= nRowEndIndex; nRow++) {
+
+                            //String no = sheet.getCell(nColumnStartIndex, nRow).getContents();
+                            String si = null;
+                            String gu = null;
+                            String title = null;
+                            String day_start = null;
+                            String day_end = null;
+                            String local = null;
+
+
+                            for (int nColumn = nColumnStartIndex; nColumn <= nColumnEndIndex; nColumn++) {
+                                si = sheet.getCell(1, nRow).getContents();
+                                //gu = sheet.getCell(2, nRow).getContents();
+                                title = sheet.getCell(2, nRow).getContents();
+                                String strDayStart = sheet.getCell(3, nRow).getContents();
+                                day_start = strDayStart.replace(".", "-");
+                                String strDayEnd = sheet.getCell(4, nRow).getContents();
+                                day_end = strDayEnd.replace(".", "-");
+                                local = sheet.getCell(5, nRow).getContents();
+
+                            }
+
+                            CommonJava.Loging.i(getLocalClassName(), "si : " + si + " gu : " + gu + " title : " + title + " day_start : " + day_start + " day_end : " + day_end + " local : " + local);
+
+                            dbManageMent.createNote(si, gu, title, day_start, day_end, local);
+                        }
+
+                    } else {
+                        CommonJava.Loging.e(getLocalClassName(), "sheet is null");
+                    }
+                } else {
+                    CommonJava.Loging.e(getLocalClassName(), "workbook is null");
+                }
+
+            } catch (BiffException e) {
+                e.printStackTrace();
+                CommonJava.Loging.e(getLocalClassName(), "Error : " + e.toString());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            CommonJava.Loging.e(getLocalClassName(), "Error : " + e.toString());
+        }
+
+        if (workbook != null) {
+            workbook.close();
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        dbManageMent.close();
+        super.onDestroy();
     }
 }

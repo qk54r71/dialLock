@@ -41,6 +41,12 @@ public class CommonJava {
                 Log.e(className, strContent);
             }
         }
+
+        public static void w(String className, String strContent) {
+            if (logingCheck) {
+                Log.w(className, strContent);
+            }
+        }
     }
 
     /**
@@ -104,10 +110,10 @@ public class CommonJava {
      *
      * @return
      */
-    public static String getYear() {
+    public static String getYear(Date date) {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy", Locale.KOREA);
-        String strYear = df.format(new Date());
+        String strYear = df.format(date);
 
         return strYear;
     }
@@ -117,10 +123,10 @@ public class CommonJava {
      *
      * @return
      */
-    public static String getMonth() {
+    public static String getMonth(Date date) {
 
         SimpleDateFormat df = new SimpleDateFormat("MM", Locale.KOREA);
-        String strMonth = df.format(new Date());
+        String strMonth = df.format(date);
 
         return strMonth;
     }
@@ -130,10 +136,10 @@ public class CommonJava {
      *
      * @return
      */
-    public static String getDay() {
+    public static String getDay(Date date) {
 
         SimpleDateFormat df = new SimpleDateFormat("dd", Locale.KOREA);
-        String strDay = df.format(new Date());
+        String strDay = df.format(date);
 
         return strDay;
     }
@@ -143,10 +149,10 @@ public class CommonJava {
      *
      * @return
      */
-    public static String getAmPm() {
+    public static String getAmPm(Date date) {
 
         SimpleDateFormat df = new SimpleDateFormat("HH", Locale.KOREA);
-        String strHour = df.format(new Date());
+        String strHour = df.format(date);
         int intHour = Integer.parseInt(strHour);
         String strAmPm = null;
 
@@ -165,10 +171,10 @@ public class CommonJava {
      *
      * @return
      */
-    public static String getHour() {
+    public static String getHour(Date date) {
 
         SimpleDateFormat df = new SimpleDateFormat("HH", Locale.KOREA);
-        String strHour = df.format(new Date());
+        String strHour = df.format(date);
         int intHour = Integer.parseInt(strHour);
 
         strHour = String.valueOf(intHour % 12 == 0 ? 12 : intHour % 12);
@@ -181,10 +187,10 @@ public class CommonJava {
      *
      * @return
      */
-    public static String getMinute() {
+    public static String getMinute(Date date) {
 
         SimpleDateFormat df = new SimpleDateFormat("mm", Locale.KOREA);
-        String strMinute = df.format(new Date());
+        String strMinute = df.format(date);
 
         return strMinute;
     }
@@ -194,15 +200,16 @@ public class CommonJava {
      *
      * @return
      */
-    public static String getDayOfWeek() {
+    public static String getDayOfWeek(Date date) {
         Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
         String strWeek = null;
 
         int nWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (nWeek == 1) {
             strWeek = "일요일";
         } else if (nWeek == 2) {
-            strWeek = "월요";
+            strWeek = "월요일";
         } else if (nWeek == 3) {
             strWeek = "화요일";
         } else if (nWeek == 4) {
@@ -216,6 +223,19 @@ public class CommonJava {
         }
 
         return strWeek;
+    }
+
+    /**
+     * 현재 날짜 및 시간 가져오기
+     *
+     * @return
+     */
+    public static Date getNowDate() {
+
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+
+        return date;
     }
 
 }

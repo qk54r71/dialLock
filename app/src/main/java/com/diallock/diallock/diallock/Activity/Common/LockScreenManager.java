@@ -12,15 +12,21 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
+import com.diallock.diallock.diallock.Activity.Adapter.ListViewAdapter;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
 import com.diallock.diallock.diallock.R;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,6 +46,16 @@ public class LockScreenManager {
     private Timer mTimer;
     private Handler mHandler = new Handler();
     private LockStatusListener lockStatusListener;
+    private Date nowDate;
+
+    private TextView txt_lock_day;
+    private TextView txt_lock_time;
+    private ListView lock_screen_listview;
+    private Button lock_screen_pre;
+    private Button lock_screen_nex;
+    private Calendar mCalendar;
+    private Button btn_find_pass;
+    private Date mNowDate;
 
     public static synchronized LockScreenManager getInstance(Activity activity) {
         CommonJava.Loging.i(activity.getLocalClassName(), "getInstance");
@@ -51,7 +67,7 @@ public class LockScreenManager {
     public LockScreenManager(Activity activity) {
         this.mActivity = activity;
 
-        init();
+        initLock();
     }
 
     private void setFindView() {
@@ -61,7 +77,7 @@ public class LockScreenManager {
         this.mActivity = ac;
     }
 
-    private void init() {
+    private void initLock() {
         mIsLock = false;
         mWindowManagerRef = new WeakReference<WindowManager>(mActivity.getWindowManager());
         layoutParams = new WindowManager.LayoutParams();
@@ -76,6 +92,8 @@ public class LockScreenManager {
         mTimer = new Timer();
 
         mTimer.schedule(timerTask, 0, 1000);
+
+        nowDate = CommonJava.getNowDate();
     }
 
 
@@ -92,12 +110,8 @@ public class LockScreenManager {
     private Runnable mUpdateTimeTask = new Runnable() {
 
         public void run() {
-            String strTxtLockDay =
-                    CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + (CommonJava.getDayOfWeek().contains("요일") ? CommonJava.getDayOfWeek() : CommonJava.getDayOfWeek() + "일");
             String strTxtLockTime =
-                    CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
-
-            ((TextView) mLockView.findViewById(R.id.txt_lock_day)).setText(strTxtLockDay);
+                    CommonJava.getAmPm(nowDate) + " " + CommonJava.getHour(nowDate) + "시 " + CommonJava.getMinute(nowDate) + "분";
             ((TextView) mLockView.findViewById(R.id.txt_lock_time)).setText(strTxtLockTime);
         }
 
@@ -144,16 +158,70 @@ public class LockScreenManager {
             }
         });
 
-        mLockView.findViewById(R.id.btn_find_pass).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startEmailSend();
-                startTxtToast("플레이스토어에 등록된 이메일로 패스워드가 발송됩니다.");
-            }
-        });
 
+        setFIndView();
+        init();
+        setOnClick();
+        setListView();
 
     }
+
+    private void setFIndView() {
+
+        btn_find_pass = (Button) mLockView.findViewById(R.id.btn_find_pass);
+        txt_lock_day = (TextView) mLockView.findViewById(R.id.txt_lock_day);
+        txt_lock_time = (TextView) mLockView.findViewById(R.id.txt_lock_time);
+        lock_screen_pre = (Button) mLockView.findViewById(R.id.lock_screen_pre);
+        lock_screen_nex = (Button) mLockView.findViewById(R.id.lock_screen_nex);
+        lock_screen_listview = (ListView) mLockView.findViewById(R.id.lock_screen_listview);
+
+    }
+
+    private void init() {
+
+        mNowDate = CommonJava.getNowDate();
+        mCalendar = Calendar.getInstance();
+
+    }
+
+    private void setOnClick() {
+        btn_find_pass.setOnClickListener(onClickListener);
+        lock_screen_pre.setOnClickListener(onClickListener);
+        lock_screen_nex.setOnClickListener(onClickListener);
+    }
+
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.btn_find_pass:
+                    CommonJava.Loging.i(mActivity.getLocalClassName(), "onClick()");
+
+                    startEmailSend();
+                    startTxtToast("플레이스토어에 등록된 이메일로 패스워드가 발송됩니다.");
+
+                    break;
+                case R.id.lock_screen_pre:
+
+                    mCalendar.add(Calendar.DAY_OF_MONTH, -1);
+                    mNowDate = mCalendar.getTime();
+
+                    setTextDay(mNowDate);
+
+                    changeListView(mNowDate);
+                    break;
+                case R.id.lock_screen_nex:
+
+                    mCalendar.add(Calendar.DAY_OF_MONTH, +1);
+                    mNowDate = mCalendar.getTime();
+
+                    setTextDay(mNowDate);
+
+                    changeListView(mNowDate);
+                    break;
+            }
+        }
+    };
 
     private void setLockBg() {
         Uri uri = Uri.parse("");
@@ -261,8 +329,6 @@ public class LockScreenManager {
                 ((TextView) mLockView.findViewById(R.id.txt_toast)).setVisibility(View.INVISIBLE);
             }
         }, 2000);
-
-
     }
 
     public void setLockStatusListener(LockStatusListener listener) {
@@ -275,5 +341,45 @@ public class LockScreenManager {
         void onUnlock();
     }
 
+    private void setListView() {
+        mNowDate = mCalendar.getTime();
+
+        setTextDay(mNowDate);
+
+        changeListView(mNowDate);
+    }
+
+    /**
+     * DB 에 저장된 축제 정보를 가져와서 리스트뷰에 setting
+     *
+     * @param date
+     */
+    private void changeListView(Date date) {
+        CommonJava.Loging.i(mActivity.getLocalClassName(), "changeListView()");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        String strDate = dateFormat.format(date);
+
+        CommonJava.Loging.i(mActivity.getLocalClassName(), "strDate : " + strDate);
+
+        ArrayList<FestivalInfo> festivalInfos = null;
+
+        DBManageMent dbManageMent = new DBManageMent(mActivity);
+        dbManageMent.open();
+
+        festivalInfos = dbManageMent.serchDay(strDate);
+
+        ListViewAdapter listViewAdapter = new ListViewAdapter(festivalInfos);
+        lock_screen_listview.setAdapter(listViewAdapter);
+
+        dbManageMent.close();
+    }
+
+    private void setTextDay(Date nowDate) {
+        String strTxtLockDay =
+                CommonJava.getYear(nowDate) + "년 " + CommonJava.getMonth(nowDate) + "월 " + CommonJava.getDay(nowDate) + "일 " + CommonJava.getDayOfWeek(nowDate);
+
+        txt_lock_day.setText(strTxtLockDay);
+    }
 
 }

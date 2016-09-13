@@ -97,7 +97,7 @@ public class ScreenReceiver extends BroadcastReceiver {
             CommonJava.Loging.i(getClass().getName(), "onCallStateChanged() incomingNumber : " + incomingNumber);
 
             switch (state) {
-                case TelephonyManager.CALL_STATE_IDLE:
+                case TelephonyManager.CALL_STATE_IDLE: // 통화가 종료된 상태
                     isPhoneIdle = true;
                     if (mPhoneState && ScreenService.mPhoneProgressLock) {
                         CommonJava.Loging.i(getClass().getName(), "mPhoneState Lock start");
@@ -113,7 +113,7 @@ public class ScreenReceiver extends BroadcastReceiver {
 
                     break;
 
-                case TelephonyManager.CALL_STATE_RINGING:
+                case TelephonyManager.CALL_STATE_RINGING: // 전화가 걸려오는 상태
                     isPhoneIdle = false;
 
                     if (mContext != null) {
@@ -127,7 +127,7 @@ public class ScreenReceiver extends BroadcastReceiver {
 
                     break;
 
-                case TelephonyManager.CALL_STATE_OFFHOOK:
+                case TelephonyManager.CALL_STATE_OFFHOOK: // 전화를 받은 상태
                     isPhoneIdle = false;
 
                     if (mPhoneState && ScreenService.mPhoneProgressLock) {

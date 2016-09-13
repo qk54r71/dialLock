@@ -1,35 +1,32 @@
 package com.diallock.diallock.diallock.Activity.Activity;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Patterns;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.diallock.diallock.diallock.Activity.Adapter.ListViewAdapter;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Common.DBManageMent;
+import com.diallock.diallock.diallock.Activity.Common.FestivalInfo;
 import com.diallock.diallock.diallock.Activity.Common.GMailSender;
-import com.diallock.diallock.diallock.Activity.Common.HomeKeyLocker;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.locks.Lock;
-import java.util.regex.Pattern;
 
 /**
  * 이메일 보내기
@@ -41,6 +38,11 @@ public class LockScreenActivity extends AppCompatActivity {
     private Boolean backFlag;
     private TextView txt_lock_day;
     private TextView txt_lock_time;
+    private ListView lock_screen_listview;
+    private Button lock_screen_pre;
+    private Button lock_screen_nex;
+    private Date mNowDate;
+    private Calendar mCalendar;
 
     /**
      * 비밀번호 찾기 버튼
@@ -65,6 +67,7 @@ public class LockScreenActivity extends AppCompatActivity {
         setFindView();
         init();
         setOnClick();
+        setListView();
 
         //HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
 
@@ -79,16 +82,27 @@ public class LockScreenActivity extends AppCompatActivity {
         btn_find_pass = (Button) findViewById(R.id.btn_find_pass);
         txt_lock_day = (TextView) findViewById(R.id.txt_lock_day);
         txt_lock_time = (TextView) findViewById(R.id.txt_lock_time);
+        lock_screen_pre = (Button) findViewById(R.id.lock_screen_pre);
+        lock_screen_nex = (Button) findViewById(R.id.lock_screen_nex);
+        lock_screen_listview = (ListView) findViewById(R.id.lock_screen_listview);
+
 
     }
 
     private void init() {
         backFlag = false;
 
+        mNowDate = CommonJava.getNowDate();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+        String strDate = dateFormat.format(mNowDate);
+
+        CommonJava.Loging.i(getLocalClassName(), "strDate : " + strDate);
+
         String strTxtLockDay =
-                CommonJava.getYear() + "년 " + CommonJava.getMonth() + "월 " + CommonJava.getDay() + "일 " + (CommonJava.getDayOfWeek().contains("요일") ? CommonJava.getDayOfWeek():CommonJava.getDayOfWeek()+"일");
+                CommonJava.getYear(mNowDate) + "년 " + CommonJava.getMonth(mNowDate) + "월 " + CommonJava.getDay(mNowDate) + "일 " + CommonJava.getDayOfWeek(mNowDate);
         String strTxtLockTime =
-                CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
+                CommonJava.getAmPm(mNowDate) + " " + CommonJava.getHour(mNowDate) + "시 " + CommonJava.getMinute(mNowDate) + "분";
 
         txt_lock_day.setText(strTxtLockDay);
         txt_lock_time.setText(strTxtLockTime);
@@ -99,6 +113,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
         mTimer.schedule(timerTask, 500, 1000);
 
+        mCalendar = Calendar.getInstance();
 
     }
 
@@ -108,7 +123,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
         public void run() {
             String strTxtLockTime =
-                    CommonJava.getAmPm() + " " + CommonJava.getHour() + "시 " + CommonJava.getMinute() + "분";
+                    CommonJava.getAmPm(mNowDate) + " " + CommonJava.getHour(mNowDate) + "시 " + CommonJava.getMinute(mNowDate) + "분";
             txt_lock_time.setText(strTxtLockTime);
         }
 
@@ -128,6 +143,8 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private void setOnClick() {
         btn_find_pass.setOnClickListener(onClickListener);
+        lock_screen_pre.setOnClickListener(onClickListener);
+        lock_screen_nex.setOnClickListener(onClickListener);
     }
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -140,6 +157,24 @@ public class LockScreenActivity extends AppCompatActivity {
 
                     Toast.makeText(LockScreenActivity.this, "플레이스토어에 등록된 gmail 로 비밀번호가 전송되었습니다.", Toast.LENGTH_SHORT).show();
 
+                    break;
+                case R.id.lock_screen_pre:
+
+                    mCalendar.add(Calendar.DAY_OF_MONTH, -1);
+                    mNowDate = mCalendar.getTime();
+
+                    setTextDay(mNowDate);
+
+                    changeListView(mNowDate);
+                    break;
+                case R.id.lock_screen_nex:
+
+                    mCalendar.add(Calendar.DAY_OF_MONTH, +1);
+                    mNowDate = mCalendar.getTime();
+
+                    setTextDay(mNowDate);
+
+                    changeListView(mNowDate);
                     break;
             }
         }
@@ -278,6 +313,49 @@ public class LockScreenActivity extends AppCompatActivity {
 
     public void isToast(String strMsg) {
         Toast.makeText(LockScreenActivity.this, strMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setListView() {
+
+        mNowDate = mCalendar.getTime();
+
+        setTextDay(mNowDate);
+
+        changeListView(mNowDate);
+
+    }
+
+    /**
+     * DB 에 저장된 축제 정보를 가져와서 리스트뷰에 setting
+     *
+     * @param date
+     */
+    private void changeListView(Date date) {
+        CommonJava.Loging.i(getLocalClassName(), "changeListView()");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        String strDate = dateFormat.format(date);
+
+        CommonJava.Loging.i(getLocalClassName(), "strDate : " + strDate);
+
+        ArrayList<FestivalInfo> festivalInfos = null;
+
+        DBManageMent dbManageMent = new DBManageMent(LockScreenActivity.this);
+        dbManageMent.open();
+
+        festivalInfos = dbManageMent.serchDay(strDate);
+
+        ListViewAdapter listViewAdapter = new ListViewAdapter(festivalInfos);
+        lock_screen_listview.setAdapter(listViewAdapter);
+
+        dbManageMent.close();
+    }
+
+    private void setTextDay(Date nowDate) {
+        String strTxtLockDay =
+                CommonJava.getYear(nowDate) + "년 " + CommonJava.getMonth(nowDate) + "월 " + CommonJava.getDay(nowDate) + "일 " + CommonJava.getDayOfWeek(nowDate);
+
+        txt_lock_day.setText(strTxtLockDay);
     }
 
 
