@@ -110,9 +110,12 @@ public class LockScreenManager {
     private Runnable mUpdateTimeTask = new Runnable() {
 
         public void run() {
+            Date runDate = new Date();
+            CommonJava.Loging.i(getClass().getName(),"mUpdateTimeTask() run()");
             String strTxtLockTime =
-                    CommonJava.getAmPm(nowDate) + " " + CommonJava.getHour(nowDate) + "시 " + CommonJava.getMinute(nowDate) + "분";
-            ((TextView) mLockView.findViewById(R.id.txt_lock_time)).setText(strTxtLockTime);
+                    CommonJava.getAmPm(runDate) + " " + CommonJava.getHour(runDate) + "시 " + CommonJava.getMinute(runDate) + "분";
+            CommonJava.Loging.i(getClass().getName(),"mUpdateTimeTask() strTxtLockTime : "+strTxtLockTime);
+            txt_lock_time.setText(strTxtLockTime);
         }
 
     };
@@ -125,7 +128,7 @@ public class LockScreenManager {
         if (mTimer != null) {
             MainTimerTask timerTask = new MainTimerTask();
             mTimer = new Timer();
-            mTimer.schedule(timerTask, 500, 3000);
+            mTimer.schedule(timerTask, 0, 1000);
         }
     }
 

@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.View;
@@ -31,7 +32,10 @@ import com.diallock.diallock.diallock.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.Queue;
 
 /**
  * Created by park on 2016-08-09.
@@ -276,7 +280,7 @@ public class CircleLayout extends View {
              * 현재 눌려진 위치 찾아서 클릭 이미지로 변경
              */
             Bitmap bitmapClickImage = null;
-            if (mDialImageInfo.getCurrentClickBitmapImageIndex() == i) {
+            /*if (mDialImageInfo.getCurrentClickBitmapImageIndex() == i) {
                 bitmapClickImage = mBitmapImages.get(i).getNumClick();
             } else if (mDialImageInfo.getPreClickBitmapImageIndex() == i) {
                 bitmapClickImage = mBitmapImages.get(i).getNumClick();
@@ -284,8 +288,21 @@ public class CircleLayout extends View {
                 bitmapClickImage = mBitmapImages.get(i).getNumClick();
             } else {
                 bitmapClickImage = mBitmapImages.get(i).getNum();
-            }
-
+            }*/
+            CommonJava.Loging.i(getClass().getName(),"bitmapClickImage i :"+i);
+            /*if(mDialImageInfo.getPressBitmapImageIndex() != null) {
+                for (Integer bitmapIndex : mDialImageInfo.getPressBitmapImageIndex()) {
+                    if (bitmapIndex == i) {
+                        bitmapClickImage = mBitmapImages.get(i).getNumClick();
+                    } else {
+                        bitmapClickImage = mBitmapImages.get(i).getNum();
+                    }
+                }
+            }else{
+                bitmapClickImage = mBitmapImages.get(i).getNum();
+            }*/
+            bitmapClickImage = mBitmapImages.get(i).getNum();
+            CommonJava.Loging.i(getClass().getName(),"bitmapClickImage :"+bitmapClickImage);
             canvas.drawBitmap(bitmapClickImage, width / 2 + centerX - bitmapClickImage.getWidth() / 2, height / 2 + centerY - bitmapClickImage.getHeight() / 2, null);
 
             float bitmapImgX = width / 2 + centerX;
@@ -390,7 +407,8 @@ public class CircleLayout extends View {
 
                     CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag Event start isImageInnerIndex : " + isImageInnerIndex);
 
-                    mDialImageInfo.setCurrentClickBitmapImageIndex(isImageInnerIndex);
+                    //mDialImageInfo.setCurrentClickBitmapImageIndex(isImageInnerIndex);
+                    mDialImageInfo.setPressBitmapImageIndex(isImageInnerIndex);
 
                     mStartDial = true;
                     mDragIndex = isImageInnerIndex;
@@ -400,13 +418,15 @@ public class CircleLayout extends View {
                     Boolean vactorBl = dragIndexVactor();
                     CommonJava.Loging.i("CircleLayout", "dragIndexVactor : " + vactorBl);
                     if (!vactorBl) {
-
+                        int preIndex = mDialImageInfo.getPressBitmapImageIndex().size() - 2;
                         if (mPassword == null) {
-                            mPassword = mBitmapImages.get(mDialImageInfo.getPreClickBitmapImageIndex()).getBitmapValue();
+                            //mPassword = mBitmapImages.get(mDialImageInfo.getPreClickBitmapImageIndex()).getBitmapValue();
+                            mPassword = mBitmapImages.get(mDialImageInfo.getPressBitmapImageIndex().get(preIndex)).getBitmapValue();
                             CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag isImageInnerValue : " + mPassword);
                         } else {
+                            //mPassword += mBitmapImages.get(mDialImageInfo.getPreClickBitmapImageIndex()).getBitmapValue();
+                            mPassword += mBitmapImages.get(mDialImageInfo.getPressBitmapImageIndex().get(preIndex)).getBitmapValue();
                             CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag isImageInnerValue : " + mPassword);
-                            mPassword += mBitmapImages.get(mDialImageInfo.getPreClickBitmapImageIndex()).getBitmapValue();
                         }
 
                         bitmapImageListShuffle();
@@ -554,20 +574,24 @@ public class CircleLayout extends View {
 
     /**
      * 현재 눌려진 이미지의 정보를 갖음
-     * 총 3개의 눌려진 정보를 갖음
+     * 총 3개의 눌려진 정보를 갖음 (변경)
+     * 2016-09-19 수정
+     * 총 12개 까지의 눌려진 정보를 갖음
      */
-    private class DialImageInfo {
+    private class DialImageInfo {/*
         private int currentClickBitmapImageIndex = NUM_NULL;
         private int preClickBitmapImageIndex = NUM_NULL;
-        private int prePreClickBitmapImageIndex = NUM_NULL;
+        private int prePreClickBitmapImageIndex = NUM_NULL;*/
+        private ArrayList<Integer> pressBitmapImageIndex = null;
 
-        public void initDialImageInfo() {
+        public void initDialImageInfo() {/*
             this.currentClickBitmapImageIndex = NUM_NULL;
             this.preClickBitmapImageIndex = NUM_NULL;
-            this.prePreClickBitmapImageIndex = NUM_NULL;
+            this.prePreClickBitmapImageIndex = NUM_NULL;*/
+            this.pressBitmapImageIndex = new ArrayList<>();
         }
 
-        public int getCurrentClickBitmapImageIndex() {
+       /* public int getCurrentClickBitmapImageIndex() {
 
             return currentClickBitmapImageIndex;
         }
@@ -601,6 +625,14 @@ public class CircleLayout extends View {
 
         public void setPrePreClickBitmapImageIndex(int prePreClickBitmapImageIndex) {
             this.prePreClickBitmapImageIndex = prePreClickBitmapImageIndex;
+        }*/
+
+        public ArrayList<Integer> getPressBitmapImageIndex() {
+            return pressBitmapImageIndex;
+        }
+
+        public void setPressBitmapImageIndex(Integer pressBitmapImageIndexNumber) {
+            this.pressBitmapImageIndex.add(pressBitmapImageIndexNumber);
         }
     }
 
@@ -782,9 +814,11 @@ public class CircleLayout extends View {
      */
     private Boolean dragIndexVactor() {
 
-        int currentIndex = mDialImageInfo.getCurrentClickBitmapImageIndex();
-        int preIndex = mDialImageInfo.getPreClickBitmapImageIndex();
-        int prePreIndex = mDialImageInfo.getPrePreClickBitmapImageIndex();
+        int indexSize = mDialImageInfo.getPressBitmapImageIndex().size() - 1;
+
+        int currentIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize);
+        int preIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize - 1);
+        int prePreIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize - 2);
 
         if (currentIndex == NUM_NULL || preIndex == NUM_NULL || prePreIndex == NUM_NULL) {
             return true;
