@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/frame_layout"
-    tools:context="com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity">
+    tools:context="com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity"
+    android:background="@null">
 
 
 </FrameLayout>

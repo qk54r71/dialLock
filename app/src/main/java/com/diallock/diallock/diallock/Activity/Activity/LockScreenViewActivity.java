@@ -143,6 +143,7 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
 
     @Override
     public void onUnlock() {
+        mLockScreeniManager.timeCancle();
         mLockScreeniManager.unLock();
     }
 }

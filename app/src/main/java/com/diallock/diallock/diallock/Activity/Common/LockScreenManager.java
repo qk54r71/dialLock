@@ -81,8 +81,8 @@ public class LockScreenManager {
         mIsLock = false;
         mWindowManagerRef = new WeakReference<WindowManager>(mActivity.getWindowManager());
         layoutParams = new WindowManager.LayoutParams();
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        //layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        //layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR; // 이 기능임
         layoutParams.flags = 1280;
 

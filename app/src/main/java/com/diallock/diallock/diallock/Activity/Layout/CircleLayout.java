@@ -289,20 +289,25 @@ public class CircleLayout extends View {
             } else {
                 bitmapClickImage = mBitmapImages.get(i).getNum();
             }*/
-            CommonJava.Loging.i(getClass().getName(),"bitmapClickImage i :"+i);
-            /*if(mDialImageInfo.getPressBitmapImageIndex() != null) {
+            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage i :" + i);
+            if (mDialImageInfo.getPressBitmapImageIndex() != null && mDialImageInfo.getPressBitmapImageIndex().size() != 0) {
+                CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mDialImageInfo.getPressBitmapImageIndex() :" + mDialImageInfo.getPressBitmapImageIndex());
                 for (Integer bitmapIndex : mDialImageInfo.getPressBitmapImageIndex()) {
                     if (bitmapIndex == i) {
+                        CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mBitmapImages.get(i).getNumClick()");
                         bitmapClickImage = mBitmapImages.get(i).getNumClick();
+                        break;
                     } else {
+                        CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mBitmapImages.get(i).getNum()");
                         bitmapClickImage = mBitmapImages.get(i).getNum();
                     }
                 }
-            }else{
+            } else {
+                CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mBitmapImages.get(i).getNum()");
                 bitmapClickImage = mBitmapImages.get(i).getNum();
-            }*/
-            bitmapClickImage = mBitmapImages.get(i).getNum();
-            CommonJava.Loging.i(getClass().getName(),"bitmapClickImage :"+bitmapClickImage);
+            }
+            //bitmapClickImage = mBitmapImages.get(i).getNum();
+            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage :" + bitmapClickImage);
             canvas.drawBitmap(bitmapClickImage, width / 2 + centerX - bitmapClickImage.getWidth() / 2, height / 2 + centerY - bitmapClickImage.getHeight() / 2, null);
 
             float bitmapImgX = width / 2 + centerX;
@@ -817,10 +822,18 @@ public class CircleLayout extends View {
         int indexSize = mDialImageInfo.getPressBitmapImageIndex().size() - 1;
 
         int currentIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize);
-        int preIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize - 1);
-        int prePreIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize - 2);
+        CommonJava.Loging.i(getClass().getName(), "dragIndexVactor() indexSize : " + indexSize);
+        CommonJava.Loging.i(getClass().getName(), "dragIndexVactor() currentIndex : " + currentIndex);
+        int preIndex = 0;
+        int prePreIndex = 0;
+        if (indexSize != 0) {
+            preIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize - 1);
+            if (indexSize != 1) {
+                prePreIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize - 2);
+            }
+        }
 
-        if (currentIndex == NUM_NULL || preIndex == NUM_NULL || prePreIndex == NUM_NULL) {
+        if (currentIndex == 0 || preIndex == 0 || prePreIndex == 0) {
             return true;
         }
 
