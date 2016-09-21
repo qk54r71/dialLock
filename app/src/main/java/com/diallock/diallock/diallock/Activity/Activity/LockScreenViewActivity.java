@@ -31,7 +31,7 @@ import java.util.TimerTask;
  * 이메일 보내기
  * 출처 : {Link :http://blog.naver.com/PostView.nhn?blogId=junhwen&logNo=130151732452 }
  */
-public class LockScreenViewActivity extends BaseActivity implements LockScreenManager.LockStatusListener{
+public class LockScreenViewActivity extends BaseActivity implements LockScreenManager.LockStatusListener {
 
     private CircleLayout circleLayout;
     private Boolean backFlag;
@@ -54,15 +54,17 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
     public static Activity mLockScreenViewActivity;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {/*
         getWindow().addFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
-                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         super.onCreate(savedInstanceState);
 
         CommonJava.Loging.i("LockScreenActivity", "onCreate()");
-
 
 
         setupView(R.layout.activity_lock_screen_view);

@@ -84,6 +84,13 @@ public class LockScreenManager {
         //layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         //layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR; // 이 기능임
+        CommonJava.Loging.i(getClass().getName(), "initLock layoutParams.height : " + layoutParams.height);
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        CommonJava.Loging.i(getClass().getName(), "initLock point.y : " + point.y);
+        int disHeight = point.y;
+        layoutParams.height = point.y - 100 * (disHeight / 2560);
+        layoutParams.verticalMargin = 200 * (disHeight / 2560);
         layoutParams.flags = 1280;
 
 
@@ -111,10 +118,10 @@ public class LockScreenManager {
 
         public void run() {
             Date runDate = new Date();
-            CommonJava.Loging.i(getClass().getName(),"mUpdateTimeTask() run()");
+            CommonJava.Loging.i(getClass().getName(), "mUpdateTimeTask() run()");
             String strTxtLockTime =
                     CommonJava.getAmPm(runDate) + " " + CommonJava.getHour(runDate) + "시 " + CommonJava.getMinute(runDate) + "분";
-            CommonJava.Loging.i(getClass().getName(),"mUpdateTimeTask() strTxtLockTime : "+strTxtLockTime);
+            CommonJava.Loging.i(getClass().getName(), "mUpdateTimeTask() strTxtLockTime : " + strTxtLockTime);
             txt_lock_time.setText(strTxtLockTime);
         }
 

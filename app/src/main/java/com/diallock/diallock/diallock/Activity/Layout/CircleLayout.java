@@ -433,7 +433,7 @@ public class CircleLayout extends View {
                             mPassword += mBitmapImages.get(mDialImageInfo.getPressBitmapImageIndex().get(preIndex)).getBitmapValue();
                             CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag isImageInnerValue : " + mPassword);
                         }
-
+                        mDialImageInfo.initDialImageInfo();
                         bitmapImageListShuffle();
                         invalidate();
                         isVibrator();
