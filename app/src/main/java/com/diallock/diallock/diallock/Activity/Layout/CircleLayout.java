@@ -215,8 +215,26 @@ public class CircleLayout extends View {
 
         ArrayList<Bitmap> resizeBitmap = new ArrayList<Bitmap>();
 
-        CommonJava.Loging.i("CircleLayout", "원래 아이콘 가로 getWidth : " + bitmaps.get(0).getWidth());
-        CommonJava.Loging.i("CircleLayout", "원래 아이콘 세로 getHeight : " + bitmaps.get(0).getHeight());
+        CommonJava.Loging.i("CircleLayout", "resizeBitmap 원래 아이콘 가로 getWidth : " + bitmaps.get(0).getWidth());
+        CommonJava.Loging.i("CircleLayout", "resizeBitmap 원래 아이콘 세로 getHeight : " + bitmaps.get(0).getHeight());
+
+        WindowManager windowManager = (WindowManager) mContext.getSystemService(mContext.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+
+        Integer parentLinearWidth = point.x;
+        Integer parentLinearHeight = point.y;
+
+        int innerRadius = parentLinearHeight / 2 - (parentLinearWidth * 270 / 1440);
+        int outerRadius = parentLinearHeight / 2 - (parentLinearWidth * 30 / 1440);
+
+        CommonJava.Loging.i("CircleLayout", "resizeBitmap innerRadius : " + innerRadius);
+        CommonJava.Loging.i("CircleLayout", "resizeBitmap outerRadius : " + outerRadius);
+
+        int bitmapSize = 48 * parentLinearWidth / 1440;
+
+        CommonJava.Loging.i("CircleLayout", "resizeBitmap bitmapSize : " + bitmapSize);
 
         for (Bitmap bitmap : bitmaps) {
 
@@ -260,6 +278,8 @@ public class CircleLayout extends View {
 
         CommonJava.Loging.i("CircleLayout", "현재 화면 가로 getWidth : " + getWidth());
         CommonJava.Loging.i("CircleLayout", "현재 화면 세로 getHeight: " + getHeight());
+        CommonJava.Loging.i("CircleLayout", "Display mInnerRadius : " + mInnerRadius);
+        CommonJava.Loging.i("CircleLayout", "Display mOuterRadius : " + mOuterRadius);
 
 
         if (mOvalRect == null) {
@@ -308,6 +328,8 @@ public class CircleLayout extends View {
             }
             //bitmapClickImage = mBitmapImages.get(i).getNum();
             CommonJava.Loging.i(getClass().getName(), "bitmapClickImage :" + bitmapClickImage);
+            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage width:" + bitmapClickImage.getHeight());
+            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage height:" + bitmapClickImage.getWidth());
             canvas.drawBitmap(bitmapClickImage, width / 2 + centerX - bitmapClickImage.getWidth() / 2, height / 2 + centerY - bitmapClickImage.getHeight() / 2, null);
 
             float bitmapImgX = width / 2 + centerX;
@@ -317,7 +339,11 @@ public class CircleLayout extends View {
 
             mBitmapImages.get(i).setxLocation(bitmapImgX);
             mBitmapImages.get(i).setyLocation(bitmapImgY);
-            mBitmapImages.get(i).setImgRadius((int) (bitmapRadius * 1.25));
+            /**
+             * 터치되는 버튼 영역 크기 조절
+             */
+            mBitmapImages.get(i).setImgRadius((int) (bitmapRadius * 1.25 * width / 1440));
+            CommonJava.Loging.i(getClass().getName(), "(int) (bitmapRadius * 1.25 * width / 1440) :" + (int) (bitmapRadius * 1.25 * width / 1440));
         }
 
         mPaint.setColor(Color.WHITE);
