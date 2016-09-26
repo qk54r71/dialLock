@@ -2,6 +2,7 @@ package com.diallock.diallock.diallock.Activity.Common;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -30,9 +31,21 @@ public class CommonJava {
             }
         }
 
+        public static void i(Context context,String strContent) {
+            if (logingCheck) {
+                Log.i(((Activity)context).getLocalClassName(), strContent);
+            }
+        }
+
         public static void d(String className, String strContent) {
             if (logingCheck) {
                 Log.d(className, strContent);
+            }
+        }
+
+        public static void d(Context context,String strContent) {
+            if (logingCheck) {
+                Log.d(((Activity)context).getLocalClassName(), strContent);
             }
         }
 
@@ -42,9 +55,21 @@ public class CommonJava {
             }
         }
 
+        public static void e(Context context,String strContent) {
+            if (logingCheck) {
+                Log.e(((Activity)context).getLocalClassName(), strContent);
+            }
+        }
+
         public static void w(String className, String strContent) {
             if (logingCheck) {
                 Log.w(className, strContent);
+            }
+        }
+
+        public static void w(Context context,String strContent) {
+            if (logingCheck) {
+                Log.w(((Activity)context).getLocalClassName(), strContent);
             }
         }
     }
@@ -207,19 +232,19 @@ public class CommonJava {
 
         int nWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (nWeek == 1) {
-            strWeek = "일요일";
+            strWeek = "일";
         } else if (nWeek == 2) {
-            strWeek = "월요일";
+            strWeek = "월";
         } else if (nWeek == 3) {
-            strWeek = "화요일";
+            strWeek = "화";
         } else if (nWeek == 4) {
-            strWeek = "수요일";
+            strWeek = "수";
         } else if (nWeek == 5) {
-            strWeek = "목요일";
+            strWeek = "목";
         } else if (nWeek == 6) {
-            strWeek = "금요일";
+            strWeek = "금";
         } else if (nWeek == 7) {
-            strWeek = "토요일";
+            strWeek = "토";
         }
 
         return strWeek;

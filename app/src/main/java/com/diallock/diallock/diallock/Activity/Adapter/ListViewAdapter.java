@@ -67,13 +67,15 @@ public class ListViewAdapter extends BaseAdapter {
         TextView txt_item_local = (TextView) customView.findViewById(R.id.txt_item_local);
         Button btn_item = (Button) customView.findViewById(R.id.btn_item);
 
-        if(pos % 2 !=0){
-            list_item.setBackgroundColor(Color.rgb(222,232,243));
+        if (pos % 2 != 0) {
+            list_item.setBackgroundColor(Color.rgb(222, 232, 243));
+        } else {
+            list_item.setBackgroundColor(Color.WHITE);
         }
 
         txt_item_si.setText(festivalInfos.get(pos).si);
 
-        if (festivalInfos.get(pos).gu == null) {
+        if (festivalInfos.get(pos).gu == null || festivalInfos.get(pos).gu.isEmpty()) {
             txt_item_gu.setVisibility(View.GONE);
         } else {
             txt_item_gu.setVisibility(View.VISIBLE);
@@ -84,39 +86,60 @@ public class ListViewAdapter extends BaseAdapter {
 
         String strDayStart = festivalInfos.get(pos).day_start;
         String strDayEnd = festivalInfos.get(pos).day_end;
-
-        strDayStart = strDayStart.substring(5);
-        strDayEnd = strDayEnd.substring(5);
-
-        txt_item_day.setText(strDayStart + "~" + strDayEnd);
-        txt_item_local.setText(festivalInfos.get(pos).local);
+        String strDayStartDay = null;
+        String strDayEndDay = null;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        try {
+            Date dateStart = dateFormat.parse(strDayStart);
+            Date dateEnd = dateFormat.parse(strDayEnd);
+
+            strDayStartDay = strDayStart + "." + CommonJava.getDayOfWeek(dateStart).substring(0, 1);
+            strDayEndDay = strDayEnd + "." + CommonJava.getDayOfWeek(dateEnd).substring(0, 1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        strDayStart = strDayStart.substring(5);
+        strDayEnd = strDayEnd.substring(5);
+        strDayStartDay = strDayStartDay.substring(5).replace("-",".");
+        strDayEndDay = strDayEndDay.substring(5).replace("-",".");
+
+        if (strDayStart.equals(strDayEnd)) {
+            txt_item_day.setText(strDayStartDay);
+        } else {
+            txt_item_day.setText(strDayStartDay + "~" + strDayEndDay);
+        }
+        txt_item_local.setText(festivalInfos.get(pos).local);
+
         Date currentDate = Calendar.getInstance().getTime();
         String strCurrentDate = dateFormat.format(currentDate);
         String strCurrentDateSub = strCurrentDate.substring(5);
+
         CommonJava.Loging.i(getClass().getName(), "strCurrentDate : " + strCurrentDate);
         CommonJava.Loging.i(getClass().getName(), "strCurrentDate.compareTo(festivalInfos.get(pos).day_end) : " + strCurrentDate.compareTo(festivalInfos.get(pos).day_end));
         CommonJava.Loging.i(getClass().getName(), "strCurrentDate.compareTo(festivalInfos.get(pos).day_start) : " + strCurrentDate.compareTo(festivalInfos.get(pos).day_start));
-
+        CommonJava.Loging.i(getClass().getName(), "strCurrentDate strDayStart : " + strDayStart);
+        CommonJava.Loging.i(getClass().getName(), "strCurrentDate strDayEnd : " + strDayEnd);
 
 
         if (strCurrentDate.compareTo(festivalInfos.get(pos).day_end) > 0) {
-            CommonJava.Loging.i(getClass().getName(), "strCurrentDate : " + strCurrentDate);
             CommonJava.Loging.i(getClass().getName(), "festivalInfos.get(pos).day_end : " + festivalInfos.get(pos).day_end);
             btn_item.setBackgroundResource(R.drawable.btn_lock_screen_end);
-            btn_item.setText("종료");
+            btn_item.setText("끝");
         } else if (strCurrentDate.compareTo(festivalInfos.get(pos).day_start) < 0) {
-            CommonJava.Loging.i(getClass().getName(), "strCurrentDate : " + strCurrentDate);
             CommonJava.Loging.i(getClass().getName(), "festivalInfos.get(pos).day_start : " + festivalInfos.get(pos).day_start);
             btn_item.setBackgroundResource(R.drawable.btn_lock_screen_end);
-            btn_item.setText("준비");
+            btn_item.setText("예정");
         } else if (strDayStart.equals(strDayEnd) && strDayStart.equals(strCurrentDateSub)) {
             btn_item.setBackgroundResource(R.drawable.btn_lock_screen_today);
             btn_item.setText("당일");
         } else if (strDayStart.equals(strCurrentDateSub)) {
             btn_item.setBackgroundResource(R.drawable.btn_lock_screen_start);
             btn_item.setText("시작");
+        } else if (strDayEnd.equals(strCurrentDateSub)) {
+            btn_item.setBackgroundResource(R.drawable.btn_lock_screen_end);
+            btn_item.setText("종료");
         } else {
             btn_item.setBackgroundResource(R.drawable.btn_lock_screen_pro);
             btn_item.setText("진행");

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Adapter.ListViewAdapter;
+import com.diallock.diallock.diallock.Activity.Fragment.CircleDial;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
 import com.diallock.diallock.diallock.R;
@@ -50,6 +51,7 @@ public class LockScreenManager {
 
     private TextView txt_lock_day;
     private TextView txt_lock_time;
+    private TextView txt_lock_title;
     private ListView lock_screen_listview;
     private Button lock_screen_pre;
     private Button lock_screen_nex;
@@ -164,6 +166,8 @@ public class LockScreenManager {
                         break;
                 }
 
+                CircleDial.newInstance().setOnTouchCircleDial(event);
+
                 return false;
             }
         });
@@ -184,13 +188,15 @@ public class LockScreenManager {
         lock_screen_pre = (Button) mLockView.findViewById(R.id.lock_screen_pre);
         lock_screen_nex = (Button) mLockView.findViewById(R.id.lock_screen_nex);
         lock_screen_listview = (ListView) mLockView.findViewById(R.id.lock_screen_listview);
-
+        txt_lock_title = (TextView) mLockView.findViewById(R.id.txt_lock_title);
     }
 
     private void init() {
 
         mNowDate = CommonJava.getNowDate();
         mCalendar = Calendar.getInstance();
+
+        txt_lock_title.setText("다이얼락");
 
     }
 
@@ -387,7 +393,7 @@ public class LockScreenManager {
 
     private void setTextDay(Date nowDate) {
         String strTxtLockDay =
-                CommonJava.getYear(nowDate) + "년 " + CommonJava.getMonth(nowDate) + "월 " + CommonJava.getDay(nowDate) + "일 " + CommonJava.getDayOfWeek(nowDate);
+                CommonJava.getYear(nowDate) + ". " + CommonJava.getMonth(nowDate) + ". " + CommonJava.getDay(nowDate) + ". " + CommonJava.getDayOfWeek(nowDate);
 
         txt_lock_day.setText(strTxtLockDay);
     }

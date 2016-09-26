@@ -8,8 +8,8 @@ android {
         applicationId "com.diallock.diallock.diallock"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 3
-        versionName "1.01"
+        versionCode 4
+        versionName "1.02"
     }
     buildTypes {
         release {
@@ -22,10 +22,10 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:support-v4:24.1.1'
     compile files('libs/activation.jar')
     compile files('libs/additionnal.jar')
     compile files('libs/mail.jar')
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:support-v4:24.2.0'
     compile 'net.sourceforge.jexcelapi:jxl:2.6.12'
 }

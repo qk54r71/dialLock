@@ -21,12 +21,14 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Common.LockScreenManager;
+import com.diallock.diallock.diallock.Activity.Fragment.CircleDial;
 import com.diallock.diallock.diallock.Activity.taskAction.ScreenService;
 import com.diallock.diallock.diallock.R;
 
@@ -362,7 +364,7 @@ public class CircleLayout extends View {
             centerImg = getCircleBitmap(mCenterBitmapImg, mInnerRadius / 2);
 
         }
-        canvas.drawBitmap(centerImg, width / 2 - centerImg.getWidth() / 2, height / 2 - centerImg.getHeight() / 2, null);
+        //canvas.drawBitmap(centerImg, width / 2 - centerImg.getWidth() / 2, height / 2 - centerImg.getHeight() / 2, null);
 
 
         float bitmapImgX = width / 2;
@@ -428,7 +430,7 @@ public class CircleLayout extends View {
 
         CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag xLocation : " + xLocation);
         CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag yLocation : " + yLocation);
-        if (mStartDial) {
+        if (mStartDial) { // 다이얼 안에서 터치됬는지 체크
             Boolean isDialInner = isDialInner(xLocation, yLocation);
 
             if (isDialInner) {

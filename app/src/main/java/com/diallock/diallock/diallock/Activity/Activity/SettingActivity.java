@@ -439,7 +439,7 @@ public class SettingActivity extends AppCompatActivity {
         Sheet sheet = null;
 
         try {
-            InputStream is = getBaseContext().getResources().getAssets().open("festival.xls");
+            InputStream is = getBaseContext().getResources().getAssets().open("festival2.xls");
 
             try {
                 workbook = workbook.getWorkbook(is);
@@ -449,7 +449,7 @@ public class SettingActivity extends AppCompatActivity {
 
                     if (sheet != null) {
 
-                        int nMaxColumn = 6;
+                        int nMaxColumn = 7;
                         int nRowStartIndex = 1;
                         int nRowEndIndex = sheet.getColumn(nMaxColumn - 1).length - 1;
                         int nColumnStartIndex = 0;
@@ -469,13 +469,13 @@ public class SettingActivity extends AppCompatActivity {
 
                             for (int nColumn = nColumnStartIndex; nColumn <= nColumnEndIndex; nColumn++) {
                                 si = sheet.getCell(1, nRow).getContents();
-                                //gu = sheet.getCell(2, nRow).getContents();
-                                title = sheet.getCell(2, nRow).getContents();
-                                String strDayStart = sheet.getCell(3, nRow).getContents();
+                                gu = sheet.getCell(2, nRow).getContents();
+                                title = sheet.getCell(3, nRow).getContents();
+                                String strDayStart = sheet.getCell(4, nRow).getContents();
                                 day_start = strDayStart.replace(".", "-");
-                                String strDayEnd = sheet.getCell(4, nRow).getContents();
+                                String strDayEnd = sheet.getCell(5, nRow).getContents();
                                 day_end = strDayEnd.replace(".", "-");
-                                local = sheet.getCell(5, nRow).getContents();
+                                local = sheet.getCell(6, nRow).getContents();
 
                             }
 

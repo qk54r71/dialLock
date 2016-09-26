@@ -18,6 +18,7 @@ import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Common.DBManageMent;
 import com.diallock.diallock.diallock.Activity.Common.FestivalInfo;
 import com.diallock.diallock.diallock.Activity.Common.GMailSender;
+import com.diallock.diallock.diallock.Activity.Fragment.CircleDial;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
 
@@ -38,6 +39,7 @@ public class LockScreenActivity extends AppCompatActivity {
     private Boolean backFlag;
     private TextView txt_lock_day;
     private TextView txt_lock_time;
+    private TextView txt_lock_title;
     private ListView lock_screen_listview;
     private Button lock_screen_pre;
     private Button lock_screen_nex;
@@ -85,7 +87,7 @@ public class LockScreenActivity extends AppCompatActivity {
         lock_screen_pre = (Button) findViewById(R.id.lock_screen_pre);
         lock_screen_nex = (Button) findViewById(R.id.lock_screen_nex);
         lock_screen_listview = (ListView) findViewById(R.id.lock_screen_listview);
-
+        txt_lock_title = (TextView) findViewById(R.id.txt_lock_title);
 
     }
 
@@ -114,6 +116,9 @@ public class LockScreenActivity extends AppCompatActivity {
         mTimer.schedule(timerTask, 500, 1000);
 
         mCalendar = Calendar.getInstance();
+
+        txt_lock_title.setText("다이얼락");
+
 
     }
 
@@ -236,6 +241,8 @@ public class LockScreenActivity extends AppCompatActivity {
                 break;
         }
 
+        CircleDial.setOnTouchCircleDial(event);
+
         return super.onTouchEvent(event);
     }
 
@@ -353,7 +360,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private void setTextDay(Date nowDate) {
         String strTxtLockDay =
-                CommonJava.getYear(nowDate) + "년 " + CommonJava.getMonth(nowDate) + "월 " + CommonJava.getDay(nowDate) + "일 " + CommonJava.getDayOfWeek(nowDate);
+                CommonJava.getYear(nowDate) + ". " + CommonJava.getMonth(nowDate) + ". " + CommonJava.getDay(nowDate) + ". " + CommonJava.getDayOfWeek(nowDate);
 
         txt_lock_day.setText(strTxtLockDay);
     }
