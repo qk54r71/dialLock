@@ -240,8 +240,8 @@ public class LockScreenActivity extends AppCompatActivity {
                 circleLayout.screenTouchLocationEnd(xLocation, yLocation);
                 break;
         }
-
-        CircleDial.setOnTouchCircleDial(event);
+/*
+        CircleDial.setOnTouchCircleDial(event);*/
 
         return super.onTouchEvent(event);
     }

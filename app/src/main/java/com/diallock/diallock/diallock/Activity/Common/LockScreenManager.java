@@ -165,8 +165,8 @@ public class LockScreenManager {
                         ((CircleLayout) mLockView.findViewById(R.id.circle_screen)).screenTouchLocationEnd(xLocation, yLocation);
                         break;
                 }
-
-                CircleDial.newInstance().setOnTouchCircleDial(event);
+/*
+                CircleDial.newInstance().setOnTouchCircleDial(event);*/
 
                 return false;
             }
@@ -201,7 +201,7 @@ public class LockScreenManager {
     }
 
     private void setOnClick() {
-        btn_find_pass.setOnClickListener(onClickListener);
+        btn_find_pass.setOnLongClickListener(onLongClickListener);
         lock_screen_pre.setOnClickListener(onClickListener);
         lock_screen_nex.setOnClickListener(onClickListener);
     }
@@ -210,13 +210,6 @@ public class LockScreenManager {
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
-                case R.id.btn_find_pass:
-                    CommonJava.Loging.i(mActivity.getLocalClassName(), "onClick()");
-
-                    startEmailSend();
-                    startTxtToast("플레이스토어에 등록된 이메일로 패스워드가 발송됩니다.");
-
-                    break;
                 case R.id.lock_screen_pre:
 
                     mCalendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -236,6 +229,21 @@ public class LockScreenManager {
                     changeListView(mNowDate);
                     break;
             }
+        }
+    };
+
+    private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View view) {
+            switch (view.getId()) {
+                case R.id.btn_find_pass:
+                    CommonJava.Loging.i(mActivity.getLocalClassName(), "onClick()");
+
+                    startEmailSend();
+                    startTxtToast("플레이스토어에 등록된 이메일로 패스워드가 발송됩니다.");
+                    break;
+            }
+            return false;
         }
     };
 

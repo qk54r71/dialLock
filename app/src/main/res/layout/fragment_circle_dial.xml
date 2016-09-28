@@ -4,6 +4,13 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <com.diallock.diallock.diallock.Activity.Layout.ViewPager.CustomViewPager
+        android:id="@+id/widget_view"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_gravity="center"
+        android:background="@drawable/widget_circle_bg" />
+
     <com.diallock.diallock.diallock.Activity.Layout.CircleLayout
         android:id="@+id/circle_screen"
         android:layout_width="match_parent"
@@ -21,12 +28,5 @@
         android:text="플레이스토어에 등록된 이메일로 패스워드가 발송됩니다."
         android:textColor="#FFFFFF"
         android:visibility="invisible" />
-
-    <fragment
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:name="com.diallock.diallock.diallock.Activity.Fragment.WidgetTimeFragment"
-        android:id="@+id/widget_fragment"
-        android:layout_gravity="center" />
 
 </FrameLayout>

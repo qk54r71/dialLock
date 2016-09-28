@@ -1,17 +1,31 @@
 package com.diallock.diallock.diallock.Activity.Fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.DrawableRes;
 import android.support.v4.app.Fragment;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.R;
+
+import java.io.IOException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,12 +40,21 @@ public class ImageFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private final String LOG_NAME = "ImageFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private View mView;
+    private LinearLayout image_layout;
+    private ImageView sildeImage;
+
+    private Context mContext;
+
+    private Bitmap mCenterBitmapImg;
 
     public ImageFragment() {
         // Required empty public constructor
@@ -69,10 +92,85 @@ public class ImageFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        CommonJava.Loging.i(getContext(),"onCreateView");
+        CommonJava.Loging.i(LOG_NAME, "onCreateView");
 
-        return inflater.inflate(R.layout.fragment_image, container, false);
+        mView = inflater.inflate(R.layout.fragment_image, container, false);
+
+        findViewById();
+        init();
+
+        return mView;
     }
+
+    private void findViewById() {
+        image_layout = (LinearLayout) mView.findViewById(R.id.image_layout);
+        sildeImage = (ImageView) mView.findViewById(R.id.slideImage);
+    }
+
+    private void init() {
+        mContext = getContext();
+
+        String centerStrImgUrl = CommonJava.loadSharedPreferences(mContext, "imgUrl");
+
+        if (centerStrImgUrl != null && !centerStrImgUrl.isEmpty()) {
+            Uri centerImgUrl = Uri.parse(centerStrImgUrl);
+            CommonJava.Loging.i(mContext.getClass().getName(), "centerStrImgUrl : " + centerStrImgUrl);
+            try {
+                mCenterBitmapImg = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), centerImgUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            CommonJava.Loging.e(mContext.getClass().getName(), "centerStrImgUrl Null ");
+            //TODO: 기본 이미지 로고 넣어야 함
+            mCenterBitmapImg = BitmapFactory.decodeResource(getResources(), R.drawable.dialcenter);
+        }
+
+        int radius = mCenterBitmapImg.getHeight() >= mCenterBitmapImg.getWidth() ? mCenterBitmapImg.getHeight() / 2 : mCenterBitmapImg.getWidth() / 2;
+
+        mCenterBitmapImg = getCircleBitmap(mCenterBitmapImg, radius);
+
+        sildeImage.setImageBitmap(mCenterBitmapImg);
+    }
+
+    /**
+     * 비트맵 이미지 리사이징 하기
+     * 비트맵 이미지 원으로 만들기
+     *
+     * @param bitmap
+     * @return
+     */
+    private Bitmap getCircleBitmap(Bitmap bitmap, int innerRadius) {
+        Bitmap reSize = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * 0.8), (int) (bitmap.getHeight() * 0.8), true);
+        Bitmap output = Bitmap.createBitmap(reSize.getWidth(), reSize.getHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+
+        final Paint paint = new Paint();
+
+        final Rect rect = new Rect(0, 0, reSize.getWidth(), reSize.getHeight());
+
+        paint.setAntiAlias(true);
+
+        canvas.drawARGB(0, 0, 0, 0);
+
+        paint.setColor(color);
+
+        int sizeX = (reSize.getWidth() / 2);
+        int sizeY = (reSize.getHeight() / 2);
+
+        canvas.drawCircle(sizeX, sizeY, innerRadius, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+
+        canvas.drawBitmap(reSize, rect, rect, paint);
+
+        return output;
+
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

@@ -13,8 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.diallock.diallock.diallock.Activity.Adapter.WidgetPagerAdapter;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Layout.ViewPager.CustomViewPager;
 import com.diallock.diallock.diallock.R;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,11 +42,12 @@ public class CircleDial extends Fragment {
 
     static View mView;
 
-    private View widget_fragment;
+    private CustomViewPager mWidget_view;
+    private WidgetPagerAdapter mWidgetPagerAdapter;
 
     //private GestureDetectorCompat gestureDetector;
-    private static GestureDetector gestureDetector;
-    private Boolean mDialInnerCheck;
+    /*private static GestureDetector gestureDetector;
+    private Boolean mDialInnerCheck;*/
 
     public CircleDial() {
         // Required empty public constructor
@@ -140,9 +145,14 @@ public class CircleDial extends Fragment {
         }
     }
 
+    private void findViewById() {
+        mWidget_view = (CustomViewPager) mView.findViewById(R.id.widget_view);
+
+    }
+
     private void init() {
 
-        mDialInnerCheck = false;
+       /* mDialInnerCheck = false;*/
         /*gestureDetector = new GestureDetectorCompat(getContext(), new GestureDetector.OnGestureListener() {
             @Override
             public boolean onDown(MotionEvent motionEvent) {
@@ -181,7 +191,7 @@ public class CircleDial extends Fragment {
             }
         });*/
 
-        gestureDetector = new GestureDetector(getContext(), new GestureDetector.OnGestureListener() {
+        /*gestureDetector = new GestureDetector(getContext(), new GestureDetector.OnGestureListener() {
             @Override
             public boolean onDown(MotionEvent motionEvent) {
                 return false;
@@ -236,17 +246,20 @@ public class CircleDial extends Fragment {
                 }
                 return false;
             }
-        });
+        });*/
 
-    }
+        ArrayList<Fragment> fragmentArrayList = new ArrayList<>();
+        fragmentArrayList.add(new WidgetTimeFragment());
+        fragmentArrayList.add(new ImageFragment());
 
-    private void findViewById() {
-        widget_fragment = mView.findViewById(R.id.widget_fragment);
+        mWidgetPagerAdapter = new WidgetPagerAdapter(getChildFragmentManager(), fragmentArrayList);
+        mWidget_view.setAdapter(mWidgetPagerAdapter);
+
     }
 
     private void setOnTouch() {
 
-        widget_fragment.findViewById(R.id.slideImage).setOnTouchListener(new View.OnTouchListener() {
+       /* widget_fragment.findViewById(R.id.slideImage).setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 CommonJava.Loging.i("CircleDial", "onTouch");
@@ -259,26 +272,14 @@ public class CircleDial extends Fragment {
 
                 return false;
             }
-        });
+        });*/
     }
 
-    public static void setOnTouchCircleDial(MotionEvent motionEvent) {/*
+    /*public static void setOnTouchCircleDial(MotionEvent motionEvent) {*//*
         CommonJava.Loging.i("CircleDial","setOnTouchCircleDial motionEvent : "+motionEvent);
-        CommonJava.Loging.i("CircleDial","setOnTouchCircleDial gestureDetector : "+gestureDetector);*/
-        gestureDetector.onTouchEvent(motionEvent);
-    }
+        CommonJava.Loging.i("CircleDial","setOnTouchCircleDial gestureDetector : "+gestureDetector);*//*
+        *//*gestureDetector.onTouchEvent(motionEvent);*//*
+    }*/
 
-    class CircleDialAdapter extends PagerAdapter{
-
-        @Override
-        public int getCount() {
-            return 0;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return false;
-        }
-    }
 
 }

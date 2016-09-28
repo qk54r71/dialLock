@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -290,6 +291,14 @@ public class CircleLayout extends View {
 
         mPaint.setColor(mBgColors);
         mPaint.setStyle(Paint.Style.FILL);
+
+        Path clip = new Path();
+
+        clip.addCircle(width / 2, height / 2, mOuterRadius, Path.Direction.CCW);
+        clip.addCircle(width/2, height/2 ,mInnerRadius, Path.Direction.CW);
+
+        canvas.clipPath(clip);
+
         canvas.drawArc(mOvalRect, 0, 360, true, mPaint);
 
         for (int i = 0; i < mItemCount; i++) {
@@ -350,7 +359,7 @@ public class CircleLayout extends View {
 
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(width / 2, height / 2, mInnerRadius, mPaint);
+        //canvas.drawCircle(width / 2, height / 2, mInnerRadius, mPaint);
 
         /**
          * 가운에 화면에 이미지 넣기
@@ -365,7 +374,6 @@ public class CircleLayout extends View {
 
         }
         //canvas.drawBitmap(centerImg, width / 2 - centerImg.getWidth() / 2, height / 2 - centerImg.getHeight() / 2, null);
-
 
         float bitmapImgX = width / 2;
         float bitmapImgY = height / 2 + parentLinearHeight / 2;
