@@ -121,7 +121,7 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
 
     protected void onPause() {
 
-        mLockScreeniManager.timeCancle();
+        //mLockScreeniManager.timeCancle();
 
         super.onPause();
 
@@ -133,7 +133,7 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
     protected void onResume() {
 
         super.onResume();
-        mLockScreeniManager.timeStart();
+        //mLockScreeniManager.timeStart();
 
     }
 
@@ -145,7 +145,7 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
 
     @Override
     public void onUnlock() {
-        mLockScreeniManager.timeCancle();
+       // mLockScreeniManager.timeCancle();
         mLockScreeniManager.unLock();
     }
 }

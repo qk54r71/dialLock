@@ -114,6 +114,7 @@ public class CircleLayout extends View {
     private Handler handlerError;
     private Boolean errorDrowBl;
     private LockScreenManager mLockScreenManager;
+    private final String LOG_NAME = "CircleLayout";
 
 
     public CircleLayout(Context context) {
@@ -127,9 +128,9 @@ public class CircleLayout extends View {
     public CircleLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        CommonJava.Loging.i("CircleLayout", "Context : " + context);
-        CommonJava.Loging.i("CircleLayout", "AttributeSet : " + attrs);
-        CommonJava.Loging.i("CircleLayout", "defStyleAttr : " + defStyleAttr);
+        CommonJava.Loging.i(LOG_NAME, "Context : " + context);
+        CommonJava.Loging.i(LOG_NAME, "AttributeSet : " + attrs);
+        CommonJava.Loging.i(LOG_NAME, "defStyleAttr : " + defStyleAttr);
 
         mContext = context;
 
@@ -149,14 +150,14 @@ public class CircleLayout extends View {
 
         if (centerStrImgUrl != null && !centerStrImgUrl.isEmpty()) {
             Uri centerImgUrl = Uri.parse(centerStrImgUrl);
-            CommonJava.Loging.i(mContext.getClass().getName(), "centerStrImgUrl : " + centerStrImgUrl);
+            CommonJava.Loging.i(LOG_NAME, "centerStrImgUrl : " + centerStrImgUrl);
             try {
                 mCenterBitmapImg = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), centerImgUrl);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            CommonJava.Loging.e(mContext.getClass().getName(), "centerStrImgUrl Null ");
+            CommonJava.Loging.e(LOG_NAME, "centerStrImgUrl Null ");
             //TODO: 기본 이미지 로고 넣어야 함
             mCenterBitmapImg = BitmapFactory.decodeResource(getResources(), R.drawable.dialcenter);
         }
@@ -218,8 +219,8 @@ public class CircleLayout extends View {
 
         ArrayList<Bitmap> resizeBitmap = new ArrayList<Bitmap>();
 
-        CommonJava.Loging.i("CircleLayout", "resizeBitmap 원래 아이콘 가로 getWidth : " + bitmaps.get(0).getWidth());
-        CommonJava.Loging.i("CircleLayout", "resizeBitmap 원래 아이콘 세로 getHeight : " + bitmaps.get(0).getHeight());
+        CommonJava.Loging.i(LOG_NAME, "resizeBitmap 원래 아이콘 가로 getWidth : " + bitmaps.get(0).getWidth());
+        CommonJava.Loging.i(LOG_NAME, "resizeBitmap 원래 아이콘 세로 getHeight : " + bitmaps.get(0).getHeight());
 
         WindowManager windowManager = (WindowManager) mContext.getSystemService(mContext.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
@@ -232,12 +233,12 @@ public class CircleLayout extends View {
         int innerRadius = parentLinearHeight / 2 - (parentLinearWidth * 270 / 1440);
         int outerRadius = parentLinearHeight / 2 - (parentLinearWidth * 30 / 1440);
 
-        CommonJava.Loging.i("CircleLayout", "resizeBitmap innerRadius : " + innerRadius);
-        CommonJava.Loging.i("CircleLayout", "resizeBitmap outerRadius : " + outerRadius);
+        CommonJava.Loging.i(LOG_NAME, "resizeBitmap innerRadius : " + innerRadius);
+        CommonJava.Loging.i(LOG_NAME, "resizeBitmap outerRadius : " + outerRadius);
 
         int bitmapSize = 48 * parentLinearWidth / 1440;
 
-        CommonJava.Loging.i("CircleLayout", "resizeBitmap bitmapSize : " + bitmapSize);
+        CommonJava.Loging.i(LOG_NAME, "resizeBitmap bitmapSize : " + bitmapSize);
 
         for (Bitmap bitmap : bitmaps) {
 
@@ -269,8 +270,8 @@ public class CircleLayout extends View {
         Integer parentLinearWidth = point.x;
         Integer parentLinearHeight = point.y;
 
-        CommonJava.Loging.i("CircleLayout", "Display parentLinearWidth : " + parentLinearWidth);
-        CommonJava.Loging.i("CircleLayout", "Display parentLinearHeight : " + parentLinearHeight);
+        CommonJava.Loging.i(LOG_NAME, "Display parentLinearWidth : " + parentLinearWidth);
+        CommonJava.Loging.i(LOG_NAME, "Display parentLinearHeight : " + parentLinearHeight);
 
         if (mInnerRadius == 0) {
             mInnerRadius = height / 2 - (width * 270 / 1440);
@@ -279,10 +280,10 @@ public class CircleLayout extends View {
             mOuterRadius = height / 2 - (width * 30 / 1440);
         }
 
-        CommonJava.Loging.i("CircleLayout", "현재 화면 가로 getWidth : " + getWidth());
-        CommonJava.Loging.i("CircleLayout", "현재 화면 세로 getHeight: " + getHeight());
-        CommonJava.Loging.i("CircleLayout", "Display mInnerRadius : " + mInnerRadius);
-        CommonJava.Loging.i("CircleLayout", "Display mOuterRadius : " + mOuterRadius);
+        CommonJava.Loging.i(LOG_NAME, "현재 화면 가로 getWidth : " + getWidth());
+        CommonJava.Loging.i(LOG_NAME, "현재 화면 세로 getHeight: " + getHeight());
+        CommonJava.Loging.i(LOG_NAME, "Display mInnerRadius : " + mInnerRadius);
+        CommonJava.Loging.i(LOG_NAME, "Display mOuterRadius : " + mOuterRadius);
 
 
         if (mOvalRect == null) {
@@ -295,7 +296,7 @@ public class CircleLayout extends View {
         Path clip = new Path();
 
         clip.addCircle(width / 2, height / 2, mOuterRadius, Path.Direction.CCW);
-        clip.addCircle(width/2, height/2 ,mInnerRadius, Path.Direction.CW);
+        clip.addCircle(width / 2, height / 2, mInnerRadius, Path.Direction.CW);
 
         canvas.clipPath(clip);
 
@@ -320,27 +321,27 @@ public class CircleLayout extends View {
             } else {
                 bitmapClickImage = mBitmapImages.get(i).getNum();
             }*/
-            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage i :" + i);
+            CommonJava.Loging.i(LOG_NAME, "bitmapClickImage i :" + i);
             if (mDialImageInfo.getPressBitmapImageIndex() != null && mDialImageInfo.getPressBitmapImageIndex().size() != 0) {
-                CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mDialImageInfo.getPressBitmapImageIndex() :" + mDialImageInfo.getPressBitmapImageIndex());
+                CommonJava.Loging.i(LOG_NAME, "bitmapClickImage  mDialImageInfo.getPressBitmapImageIndex() :" + mDialImageInfo.getPressBitmapImageIndex());
                 for (Integer bitmapIndex : mDialImageInfo.getPressBitmapImageIndex()) {
                     if (bitmapIndex == i) {
-                        CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mBitmapImages.get(i).getNumClick()");
+                        CommonJava.Loging.i(LOG_NAME, "bitmapClickImage  mBitmapImages.get(i).getNumClick()");
                         bitmapClickImage = mBitmapImages.get(i).getNumClick();
                         break;
                     } else {
-                        CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mBitmapImages.get(i).getNum()");
+                        CommonJava.Loging.i(LOG_NAME, "bitmapClickImage  mBitmapImages.get(i).getNum()");
                         bitmapClickImage = mBitmapImages.get(i).getNum();
                     }
                 }
             } else {
-                CommonJava.Loging.i(getClass().getName(), "bitmapClickImage  mBitmapImages.get(i).getNum()");
+                CommonJava.Loging.i(LOG_NAME, "bitmapClickImage  mBitmapImages.get(i).getNum()");
                 bitmapClickImage = mBitmapImages.get(i).getNum();
             }
             //bitmapClickImage = mBitmapImages.get(i).getNum();
-            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage :" + bitmapClickImage);
-            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage width:" + bitmapClickImage.getHeight());
-            CommonJava.Loging.i(getClass().getName(), "bitmapClickImage height:" + bitmapClickImage.getWidth());
+            CommonJava.Loging.i(LOG_NAME, "bitmapClickImage :" + bitmapClickImage);
+            CommonJava.Loging.i(LOG_NAME, "bitmapClickImage width:" + bitmapClickImage.getHeight());
+            CommonJava.Loging.i(LOG_NAME, "bitmapClickImage height:" + bitmapClickImage.getWidth());
             canvas.drawBitmap(bitmapClickImage, width / 2 + centerX - bitmapClickImage.getWidth() / 2, height / 2 + centerY - bitmapClickImage.getHeight() / 2, null);
 
             float bitmapImgX = width / 2 + centerX;
@@ -354,7 +355,7 @@ public class CircleLayout extends View {
              * 터치되는 버튼 영역 크기 조절
              */
             mBitmapImages.get(i).setImgRadius((int) (bitmapRadius * 1.25 * width / 1440));
-            CommonJava.Loging.i(getClass().getName(), "(int) (bitmapRadius * 1.25 * width / 1440) :" + (int) (bitmapRadius * 1.25 * width / 1440));
+            CommonJava.Loging.i(LOG_NAME, "(int) (bitmapRadius * 1.25 * width / 1440) :" + (int) (bitmapRadius * 1.25 * width / 1440));
         }
 
         mPaint.setColor(Color.WHITE);
@@ -400,8 +401,8 @@ public class CircleLayout extends View {
      */
     public void screenTouchLocationStart(float xLocation, float yLocation) {
 
-        CommonJava.Loging.i("CircleLayout", "xLocation : " + xLocation);
-        CommonJava.Loging.i("CircleLayout", "yLocation : " + yLocation);
+        CommonJava.Loging.i(LOG_NAME, "xLocation : " + xLocation);
+        CommonJava.Loging.i(LOG_NAME, "yLocation : " + yLocation);
 
         Boolean isDialInner = isDialInner(xLocation, yLocation);
         mStartDial = false;
@@ -411,12 +412,12 @@ public class CircleLayout extends View {
             int isImageInnerIndex = isImageInner(xLocation, yLocation);
             if (isImageInnerIndex != NUM_NULL) {
 
-                CommonJava.Loging.i("CircleLayout", "screenTouchLocationStart Event start isImageInnerIndex : " + isImageInnerIndex);
+                CommonJava.Loging.i(LOG_NAME, "screenTouchLocationStart Event start isImageInnerIndex : " + isImageInnerIndex);
                 mStartDial = true;
                 //mDialImageInfo.setCurrentClickBitmapImageIndex(isImageInnerIndex);
 
                 mPassword = isImageInnerValue(xLocation, yLocation);
-                CommonJava.Loging.i("CircleLayout", "screenTouchLocationStart isImageInnerValue : " + mPassword);
+                CommonJava.Loging.i(LOG_NAME, "screenTouchLocationStart isImageInnerValue : " + mPassword);
 
                 bitmapImageListShuffle();
                 invalidate();
@@ -436,8 +437,8 @@ public class CircleLayout extends View {
      */
     public void screenTouchLocationDrag(float xLocation, float yLocation) {
 
-        CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag xLocation : " + xLocation);
-        CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag yLocation : " + yLocation);
+        CommonJava.Loging.i(LOG_NAME, "screenTouchLocationDrag xLocation : " + xLocation);
+        CommonJava.Loging.i(LOG_NAME, "screenTouchLocationDrag yLocation : " + yLocation);
         if (mStartDial) { // 다이얼 안에서 터치됬는지 체크
             Boolean isDialInner = isDialInner(xLocation, yLocation);
 
@@ -446,7 +447,7 @@ public class CircleLayout extends View {
 
                 if (isImageInnerIndex != NUM_NULL && mDragIndex != isImageInnerIndex) {
 
-                    CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag Event start isImageInnerIndex : " + isImageInnerIndex);
+                    CommonJava.Loging.i(LOG_NAME, "screenTouchLocationDrag Event start isImageInnerIndex : " + isImageInnerIndex);
 
                     //mDialImageInfo.setCurrentClickBitmapImageIndex(isImageInnerIndex);
                     mDialImageInfo.setPressBitmapImageIndex(isImageInnerIndex);
@@ -457,17 +458,17 @@ public class CircleLayout extends View {
                     invalidate();
 
                     Boolean vactorBl = dragIndexVactor();
-                    CommonJava.Loging.i("CircleLayout", "dragIndexVactor : " + vactorBl);
+                    CommonJava.Loging.i(LOG_NAME, "dragIndexVactor : " + vactorBl);
                     if (!vactorBl) {
                         int preIndex = mDialImageInfo.getPressBitmapImageIndex().size() - 2;
                         if (mPassword == null) {
                             //mPassword = mBitmapImages.get(mDialImageInfo.getPreClickBitmapImageIndex()).getBitmapValue();
                             mPassword = mBitmapImages.get(mDialImageInfo.getPressBitmapImageIndex().get(preIndex)).getBitmapValue();
-                            CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag isImageInnerValue : " + mPassword);
+                            CommonJava.Loging.i(LOG_NAME, "screenTouchLocationDrag isImageInnerValue : " + mPassword);
                         } else {
                             //mPassword += mBitmapImages.get(mDialImageInfo.getPreClickBitmapImageIndex()).getBitmapValue();
                             mPassword += mBitmapImages.get(mDialImageInfo.getPressBitmapImageIndex().get(preIndex)).getBitmapValue();
-                            CommonJava.Loging.i("CircleLayout", "screenTouchLocationDrag isImageInnerValue : " + mPassword);
+                            CommonJava.Loging.i(LOG_NAME, "screenTouchLocationDrag isImageInnerValue : " + mPassword);
                         }
                         mDialImageInfo.initDialImageInfo();
                         bitmapImageListShuffle();
@@ -494,12 +495,12 @@ public class CircleLayout extends View {
      */
     public void screenTouchLocationEnd(float xLocation, float yLocation) {
 
-        CommonJava.Loging.i("CircleLayout", "xLocation : " + xLocation);
-        CommonJava.Loging.i("CircleLayout", "yLocation : " + yLocation);
+        CommonJava.Loging.i(LOG_NAME, "xLocation : " + xLocation);
+        CommonJava.Loging.i(LOG_NAME, "yLocation : " + yLocation);
         if (mStartDial) {
 
             mPassword += isImageInnerValue(xLocation, yLocation);
-            CommonJava.Loging.i("CircleLayout", "screenTouchLocationEnd isImageInnerValue : " + mPassword);
+            CommonJava.Loging.i(LOG_NAME, "screenTouchLocationEnd isImageInnerValue : " + mPassword);
 
             mStartDial = false;
             mDialImageInfo.initDialImageInfo();
@@ -509,11 +510,11 @@ public class CircleLayout extends View {
 
             String loadPassword = CommonJava.loadSharedPreferences(mContext, "password");
 
-            CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd loadPassword : " + loadPassword);
+            CommonJava.Loging.i(LOG_NAME, "screenTouchLocationEnd loadPassword : " + loadPassword);
 
             if (isImaginaryCheck(mPassword)) {
 
-                CommonJava.Loging.i(mContext.getClass().getName(), "맞는 비밀번호 입니다.");
+                CommonJava.Loging.i(LOG_NAME, "맞는 비밀번호 입니다.");
 
                 /*Intent intentSetting = new Intent(mContext, SettingActivity.class);
                 mContext.startActivity(intentSetting);*/
@@ -523,7 +524,7 @@ public class CircleLayout extends View {
 
                     CommonJava.saveSharedPreferences(mContext, "lockCheck", "true");
 
-                    CommonJava.Loging.i(mContext.getClass().getName(), "screenTouchLocationEnd ScreenService start");
+                    CommonJava.Loging.i(LOG_NAME, "screenTouchLocationEnd ScreenService start");
                     Intent intentStartService = new Intent(mContext, ScreenService.class);
                     mContext.startService(intentStartService);
 
@@ -537,7 +538,7 @@ public class CircleLayout extends View {
                     errorDrowBl = true;
                     errorDrow();
                 }
-                CommonJava.Loging.i(mContext.getClass().getName(), "틀린 비밀번호 입니다.");
+                CommonJava.Loging.i(LOG_NAME, "틀린 비밀번호 입니다.");
             }
 
             mPassword = null;
@@ -706,8 +707,8 @@ public class CircleLayout extends View {
      */
     private Boolean isDialInner(float xTouch, float yTouch) {
 
-        CommonJava.Loging.i("CircleLayout", "isDialInner xTouch :" + xTouch);
-        CommonJava.Loging.i("CircleLayout", "isDialInner yTouch :" + yTouch);
+        CommonJava.Loging.i(LOG_NAME, "isDialInner xTouch :" + xTouch);
+        CommonJava.Loging.i(LOG_NAME, "isDialInner yTouch :" + yTouch);
 
         Boolean isBigDialInner = isInnerLocation(
                 mBigArcLocation.getxLocation(), mBigArcLocation.getyLocation(),
@@ -715,7 +716,7 @@ public class CircleLayout extends View {
                 mBigArcLocation.getImgRadius()
         );
 
-        CommonJava.Loging.i("CircleLayout", "isDialInner isBigDialInner :" + isBigDialInner);
+        CommonJava.Loging.i(LOG_NAME, "isDialInner isBigDialInner :" + isBigDialInner);
 
         if (isBigDialInner) {
             return !isInnerLocation(
@@ -840,7 +841,7 @@ public class CircleLayout extends View {
         Collections.shuffle(mBitmapImages);
 
         for (BitmapImage bitmapImage : mBitmapImages) {
-            CommonJava.Loging.i(getClass().getName(), "bitmapImageListInit : " + bitmapImage.getBitmapValue());
+            CommonJava.Loging.i(LOG_NAME, "bitmapImageListInit : " + bitmapImage.getBitmapValue());
         }
 
     }
@@ -858,10 +859,10 @@ public class CircleLayout extends View {
         int indexSize = mDialImageInfo.getPressBitmapImageIndex().size() - 1;
 
         int currentIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize);
-        CommonJava.Loging.i(getClass().getName(), "dragIndexVactor() indexSize : " + indexSize);
-        CommonJava.Loging.i(getClass().getName(), "dragIndexVactor() currentIndex : " + currentIndex);
-        int preIndex = 0;
-        int prePreIndex = 0;
+        CommonJava.Loging.i(LOG_NAME, "dragIndexVactor() indexSize : " + indexSize);
+        CommonJava.Loging.i(LOG_NAME, "dragIndexVactor() currentIndex : " + currentIndex);
+        int preIndex = 99;
+        int prePreIndex = 99;
         if (indexSize != 0) {
             preIndex = mDialImageInfo.getPressBitmapImageIndex().get(indexSize - 1);
             if (indexSize != 1) {
@@ -869,7 +870,7 @@ public class CircleLayout extends View {
             }
         }
 
-        if (currentIndex == 0 || preIndex == 0 || prePreIndex == 0) {
+        if (preIndex == 99 || prePreIndex == 99) {
             return true;
         }
 
@@ -891,7 +892,7 @@ public class CircleLayout extends View {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                CommonJava.Loging.i(getClass().getName(), "handlerError msgSwitch[0] : " + msgSwitch[0]);
+                CommonJava.Loging.i(LOG_NAME, "handlerError msgSwitch[0] : " + msgSwitch[0]);
                 switch (msgSwitch[0]) {
                     case 0:
                     case 2:
@@ -949,21 +950,21 @@ public class CircleLayout extends View {
      * @return
      */
     private Boolean isImaginaryCheck(String strPassword) {
-        CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck strPassword : " + strPassword);
+        CommonJava.Loging.i(LOG_NAME, "isImaginaryCheck strPassword : " + strPassword);
 
         String loadPassword = CommonJava.loadSharedPreferences(mContext, "password");
         String strPass = strPassword;
-        CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck strPass : " + strPass);
+        CommonJava.Loging.i(LOG_NAME, "isImaginaryCheck strPass : " + strPass);
         int minimumPass = 2;
         int maximumPass = loadPassword.length() * 2;
 
         if (strPassword.length() >= minimumPass && strPassword.length() <= maximumPass) {
 
             if (strPassword.contains(loadPassword)) {
-                CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck true ");
+                CommonJava.Loging.i(LOG_NAME, "isImaginaryCheck true ");
                 return true;
             } else {
-                CommonJava.Loging.i(getClass().getName(), "isImaginaryCheck false ");
+                CommonJava.Loging.i(LOG_NAME, "isImaginaryCheck false ");
                 return false;
             }
 

@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
 
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class ImageFragment extends Fragment {
     private View mView;
     private LinearLayout image_layout;
     private ImageView sildeImage;
+    private CircleLayout circle_screen;
 
     private Context mContext;
 
@@ -105,6 +107,7 @@ public class ImageFragment extends Fragment {
     private void findViewById() {
         image_layout = (LinearLayout) mView.findViewById(R.id.image_layout);
         sildeImage = (ImageView) mView.findViewById(R.id.slideImage);
+        circle_screen = (CircleLayout) mView.findViewById(R.id.circle_screen);
     }
 
     private void init() {
@@ -131,6 +134,8 @@ public class ImageFragment extends Fragment {
         mCenterBitmapImg = getCircleBitmap(mCenterBitmapImg, radius);
 
         sildeImage.setImageBitmap(mCenterBitmapImg);
+
+        CommonJava.Loging.i(LOG_NAME,"circle_screen : "+circle_screen);
     }
 
     /**
@@ -202,7 +207,7 @@ public class ImageFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

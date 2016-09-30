@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,6 +60,8 @@ public class LockScreenManager {
     private Button btn_find_pass;
     private Date mNowDate;
 
+    private final String LOG_NAME = "LockScreenManager";
+
     public static synchronized LockScreenManager getInstance(Activity activity) {
         CommonJava.Loging.i(activity.getLocalClassName(), "getInstance");
         if (mLockScreenManager == null)
@@ -86,10 +89,10 @@ public class LockScreenManager {
         //layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         //layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR; // 이 기능임
-        CommonJava.Loging.i(getClass().getName(), "initLock layoutParams.height : " + layoutParams.height);
+        CommonJava.Loging.i(LOG_NAME, "initLock layoutParams.height : " + layoutParams.height);
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
-        CommonJava.Loging.i(getClass().getName(), "initLock point.y : " + point.y);
+        CommonJava.Loging.i(LOG_NAME, "initLock point.y : " + point.y);
         int disHeight = point.y;
         layoutParams.height = point.y - 100 * (disHeight / 2560);
         layoutParams.verticalMargin = 200 * (disHeight / 2560);
@@ -120,10 +123,10 @@ public class LockScreenManager {
 
         public void run() {
             Date runDate = new Date();
-            CommonJava.Loging.i(getClass().getName(), "mUpdateTimeTask() run()");
+            CommonJava.Loging.i(LOG_NAME, "mUpdateTimeTask() run()");
             String strTxtLockTime =
                     CommonJava.getAmPm(runDate) + " " + CommonJava.getHour(runDate) + "시 " + CommonJava.getMinute(runDate) + "분";
-            CommonJava.Loging.i(getClass().getName(), "mUpdateTimeTask() strTxtLockTime : " + strTxtLockTime);
+            CommonJava.Loging.i(LOG_NAME, "mUpdateTimeTask() strTxtLockTime : " + strTxtLockTime);
             txt_lock_time.setText(strTxtLockTime);
         }
 
@@ -148,7 +151,7 @@ public class LockScreenManager {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                CommonJava.Loging.i(getClass().getName(), "onTouch : " + event);
+                CommonJava.Loging.i(LOG_NAME, "onTouch : " + event);
                 float xLocation = event.getX(0);
                 float yLocation = event.getY(0);
 
@@ -266,7 +269,7 @@ public class LockScreenManager {
     }
 
     public synchronized void Lock() throws NoLockStatusListenerException {
-        CommonJava.Loging.i(getClass().getName(), "Lock()");
+        CommonJava.Loging.i(LOG_NAME, "Lock()");
 
 
         if (lockStatusListener == null) {
@@ -276,10 +279,10 @@ public class LockScreenManager {
         if (mLockView != null && !mIsLock) {
             if (mIsLock) {
                 getWindowManager().updateViewLayout(mLockView, layoutParams);
-                CommonJava.Loging.i(getClass().getName(), "updateViewLayout()");
+                CommonJava.Loging.i(LOG_NAME, "updateViewLayout()");
             } else {
                 getWindowManager().addView(mLockView, layoutParams);
-                CommonJava.Loging.i(getClass().getName(), "addView()");
+                CommonJava.Loging.i(LOG_NAME, "addView()");
             }
 
             mIsLock = true;
@@ -293,11 +296,11 @@ public class LockScreenManager {
     }
 
     public synchronized void unLock() {
-        Log.i(getClass().getName(), "unLock()");
-        Log.i(getClass().getName(), "getWindowManager() : " + getWindowManager());
-        Log.i(getClass().getName(), "mIsLock : " + mIsLock);
+        Log.i(LOG_NAME, "unLock()");
+        Log.i(LOG_NAME, "getWindowManager() : " + getWindowManager());
+        Log.i(LOG_NAME, "mIsLock : " + mIsLock);
         if (getWindowManager() != null && mIsLock) {
-            Log.i(getClass().getName(), "unLock() removeView");
+            Log.i(LOG_NAME, "unLock() removeView");
 /*
             layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
             getWindowManager().removeView(mLockView);
@@ -379,12 +382,12 @@ public class LockScreenManager {
      * @param date
      */
     private void changeListView(Date date) {
-        CommonJava.Loging.i(mActivity.getLocalClassName(), "changeListView()");
+        CommonJava.Loging.i(LOG_NAME, "changeListView()");
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
         String strDate = dateFormat.format(date);
 
-        CommonJava.Loging.i(mActivity.getLocalClassName(), "strDate : " + strDate);
+        CommonJava.Loging.i(LOG_NAME, "strDate : " + strDate);
 
         ArrayList<FestivalInfo> festivalInfos = null;
 

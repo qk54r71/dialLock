@@ -8,23 +8,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.diallock.diallock.diallock.Activity.Common.CommonJava;
+import com.diallock.diallock.diallock.Activity.Adapter.WidgetPagerAdapter;
+import com.diallock.diallock.diallock.Activity.Layout.ViewPager.VerticalViewPager;
 import com.diallock.diallock.diallock.R;
+
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link WidgetTimeFragment.OnFragmentInteractionListener} interface
+ * {@link WidgetTimeBaseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link WidgetTimeFragment#newInstance} factory method to
+ * Use the {@link WidgetTimeBaseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WidgetTimeFragment extends Fragment {
+public class WidgetTimeBaseFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private final String LOG_NAME = "WidgetTimeFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -32,7 +35,11 @@ public class WidgetTimeFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public WidgetTimeFragment() {
+    private View mView;
+    private VerticalViewPager vertical_viewpager;
+    private WidgetPagerAdapter mWidgetPagerAdapter;
+
+    public WidgetTimeBaseFragment() {
         // Required empty public constructor
     }
 
@@ -42,37 +49,54 @@ public class WidgetTimeFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment WidgetTimeFragment.
+     * @return A new instance of fragment WidgetTimeBaseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static WidgetTimeFragment newInstance(String param1, String param2) {
-        WidgetTimeFragment fragment = new WidgetTimeFragment();
-        Bundle args = new Bundle();
+    public static WidgetTimeBaseFragment newInstance(String param1, String param2) {
+        WidgetTimeBaseFragment fragment = new WidgetTimeBaseFragment();
+        Bundle args = new Bundle();/*
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);/*
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        }*/
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        mView = inflater.inflate(R.layout.fragment_widget_time_base, container, false);
 
-        CommonJava.Loging.i(LOG_NAME, "onCreateView()");
+        setFindById();
+        init();
+        return mView;
+    }
 
-        return inflater.inflate(R.layout.fragment_time_widget, container, false);
+    private void setFindById() {
+        vertical_viewpager = (VerticalViewPager) mView.findViewById(R.id.vertical_viewpager);
+    }
+
+    private void init() {
+
+        ArrayList<Fragment> fragmentArrayList = new ArrayList<>();
+        fragmentArrayList.add(new WidgetTimeAnalogFragment());
+        fragmentArrayList.add(new WidgetTimeDigitalFragment());
+
+
+        mWidgetPagerAdapter = new WidgetPagerAdapter(getChildFragmentManager(),fragmentArrayList);
+        vertical_viewpager.setAdapter(mWidgetPagerAdapter);
 
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

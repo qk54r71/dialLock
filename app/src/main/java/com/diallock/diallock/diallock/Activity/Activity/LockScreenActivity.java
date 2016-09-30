@@ -111,9 +111,9 @@ public class LockScreenActivity extends AppCompatActivity {
 
         MainTimerTask timerTask = new MainTimerTask();
 
-        mTimer = new Timer();
+       /* mTimer = new Timer();
 
-        mTimer.schedule(timerTask, 500, 1000);
+        mTimer.schedule(timerTask, 500, 1000);*/
 
         mCalendar = Calendar.getInstance();
 
@@ -280,7 +280,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
     protected void onDestroy() {
 
-        mTimer.cancel();
+       // mTimer.cancel();
 
         super.onDestroy();
 
@@ -291,7 +291,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
     protected void onPause() {
 
-        mTimer.cancel();
+       // mTimer.cancel();
 
         super.onPause();
 
@@ -303,11 +303,11 @@ public class LockScreenActivity extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
-        if (mTimer != null) {
+        /*if (mTimer != null) {
             MainTimerTask timerTask = new MainTimerTask();
             mTimer = new Timer();
             mTimer.schedule(timerTask, 500, 3000);
-        }
+        }*/
 
     }
 
