@@ -128,7 +128,7 @@ public class ScreenReceiver extends BroadcastReceiver {
                     break;
 
                 case TelephonyManager.CALL_STATE_OFFHOOK: // 전화를 받은 상태
-                    isPhoneIdle = false;
+                    /*isPhoneIdle = false;
 
                     if (mPhoneState && ScreenService.mPhoneProgressLock) {
                         CommonJava.Loging.i(getClass().getName(), "mPhoneState Lock start");
@@ -141,7 +141,7 @@ public class ScreenReceiver extends BroadcastReceiver {
                         mContext.startActivity(intentLockScreenView);
                         mPhoneState = false;
                     }
-
+*/
                     break;
             }
 

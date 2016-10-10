@@ -2,11 +2,14 @@ package com.diallock.diallock.diallock.Activity.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -66,6 +69,7 @@ public class ListViewAdapter extends BaseAdapter {
         TextView txt_item_day = (TextView) customView.findViewById(R.id.txt_item_day);
         TextView txt_item_local = (TextView) customView.findViewById(R.id.txt_item_local);
         Button btn_item = (Button) customView.findViewById(R.id.btn_item);
+        ImageView list_image = (ImageView) customView.findViewById(R.id.list_image);
 
         if (pos % 2 != 0) {
             list_item.setBackgroundColor(Color.rgb(222, 232, 243));
@@ -102,8 +106,8 @@ public class ListViewAdapter extends BaseAdapter {
         }
         strDayStart = strDayStart.substring(5);
         strDayEnd = strDayEnd.substring(5);
-        strDayStartDay = strDayStartDay.substring(5).replace("-",".");
-        strDayEndDay = strDayEndDay.substring(5).replace("-",".");
+        strDayStartDay = strDayStartDay.substring(5).replace("-", ".");
+        strDayEndDay = strDayEndDay.substring(5).replace("-", ".");
 
         if (strDayStart.equals(strDayEnd)) {
             txt_item_day.setText(strDayStartDay);
@@ -144,6 +148,9 @@ public class ListViewAdapter extends BaseAdapter {
             btn_item.setBackgroundResource(R.drawable.btn_lock_screen_pro);
             btn_item.setText("진행");
         }
+
+        list_image.setImageResource(R.drawable.testimage);
+
 
         return customView;
     }

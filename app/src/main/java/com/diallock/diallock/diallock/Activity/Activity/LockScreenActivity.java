@@ -25,6 +25,7 @@ import com.diallock.diallock.diallock.R;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -351,6 +352,8 @@ public class LockScreenActivity extends AppCompatActivity {
         dbManageMent.open();
 
         festivalInfos = dbManageMent.serchDay(strDate);
+
+        Collections.shuffle(festivalInfos);
 
         ListViewAdapter listViewAdapter = new ListViewAdapter(festivalInfos);
         lock_screen_listview.setAdapter(listViewAdapter);
