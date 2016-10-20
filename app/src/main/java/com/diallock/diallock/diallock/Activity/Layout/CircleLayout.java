@@ -916,6 +916,7 @@ public class CircleLayout extends View {
                         handlerError.sendEmptyMessageDelayed(0, 200);
 
                         if (mContext instanceof LockScreenViewActivity) {
+
                             mLockScreenManager = LockScreenManager.getInstance((Activity) mContext);
                             mLockScreenManager.startTxtToast("잘못된 비밀번호 입니다.");
                         }

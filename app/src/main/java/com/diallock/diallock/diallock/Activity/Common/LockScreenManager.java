@@ -6,8 +6,6 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,11 +13,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.diallock.diallock.diallock.Activity.Activity.LockScreenViewActivity;
 import com.diallock.diallock.diallock.Activity.Adapter.ListViewAdapter;
-import com.diallock.diallock.diallock.Activity.Fragment.CircleDial;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
 import com.diallock.diallock.diallock.R;
@@ -63,16 +58,20 @@ public class LockScreenManager {
 
     private final String LOG_NAME = "LockScreenManager";
 
+    private String strSwitch;
+
     public static synchronized LockScreenManager getInstance(Activity activity) {
         CommonJava.Loging.i(activity.getLocalClassName(), "getInstance");
-        if (mLockScreenManager == null)
-            mLockScreenManager = new LockScreenManager(activity);
+        if (mLockScreenManager == null) {
+            String getStrSwitch = activity.getIntent().getStringExtra("strSwitch");
+            mLockScreenManager = new LockScreenManager(activity, getStrSwitch);
+        }
         return mLockScreenManager;
     }
 
-    public LockScreenManager(Activity activity) {
+    public LockScreenManager(Activity activity, String strSwitch) {
         this.mActivity = activity;
-
+        this.strSwitch = strSwitch;
         initLock();
     }
 
@@ -89,7 +88,9 @@ public class LockScreenManager {
         layoutParams = new WindowManager.LayoutParams();
         //layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
         //layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR; // 이 기능임
+        if (strSwitch.equals("ScreenReceiver")) {
+            layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+        }
         CommonJava.Loging.i(LOG_NAME, "initLock layoutParams.height : " + layoutParams.height);
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
@@ -148,37 +149,9 @@ public class LockScreenManager {
     public void setLockScreen(View v) {
         mLockView = v;
         setLockBg();
-        mLockView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                CommonJava.Loging.i(LOG_NAME, "onTouch : " + event);
-                float xLocation = event.getX(0);
-                float yLocation = event.getY(0);
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        ((CircleLayout) mLockView.findViewById(R.id.circle_screen)).screenTouchLocationStart(xLocation, yLocation);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-
-                        ((CircleLayout) mLockView.findViewById(R.id.circle_screen)).screenTouchLocationDrag(xLocation, yLocation);
-                        break;
-                    case MotionEvent.ACTION_UP:
-
-                        ((CircleLayout) mLockView.findViewById(R.id.circle_screen)).screenTouchLocationEnd(xLocation, yLocation);
-                        break;
-                }
-/*
-                CircleDial.newInstance().setOnTouchCircleDial(event);*/
-
-                return false;
-            }
-        });
-
-
         setFIndView();
         init();
+        setOnTouch();
         setOnClick();
         setListView();
 
@@ -247,6 +220,38 @@ public class LockScreenManager {
                     startTxtToast("플레이스토어에 등록된 이메일로 패스워드가 발송됩니다.");
                     break;
             }
+            return false;
+        }
+    };
+
+    private void setOnTouch() {
+        mLockView.setOnTouchListener(onTouchListener);
+    }
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            CommonJava.Loging.i(LOG_NAME, "onTouch : " + event);
+            float xLocation = event.getX(0);
+            float yLocation = event.getY(0);
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    ((CircleLayout) mLockView.findViewById(R.id.circle_screen)).screenTouchLocationStart(xLocation, yLocation);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+
+                    ((CircleLayout) mLockView.findViewById(R.id.circle_screen)).screenTouchLocationDrag(xLocation, yLocation);
+                    break;
+                case MotionEvent.ACTION_UP:
+
+                    ((CircleLayout) mLockView.findViewById(R.id.circle_screen)).screenTouchLocationEnd(xLocation, yLocation);
+                    break;
+            }
+/*
+                CircleDial.newInstance().setOnTouchCircleDial(event);*/
+
             return false;
         }
     };
@@ -392,7 +397,7 @@ public class LockScreenManager {
 
         ArrayList<FestivalInfo> festivalInfos = null;
 
-        DBManageMent dbManageMent = new DBManageMent(mActivity);
+        DBManagement dbManageMent = new DBManagement(mActivity);
         dbManageMent.open();
 
         festivalInfos = dbManageMent.serchDay(strDate);

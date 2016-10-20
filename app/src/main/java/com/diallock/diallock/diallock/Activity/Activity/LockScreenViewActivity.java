@@ -2,6 +2,7 @@ package com.diallock.diallock.diallock.Activity.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,7 +71,6 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         super.onCreate(savedInstanceState);
@@ -79,15 +79,11 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
 
 
         setupView(R.layout.activity_lock_screen_view);
-        mLockScreeniManager = LockScreenManager.getInstance(LockScreenViewActivity.this); // 한개의 액티비티만 생성 되게 함 싱글톤 방식
-        mLockScreeniManager.setLockStatusListener(this);
-        mLockScreeniManager.setLockScreen(LayoutInflater.from(LockScreenViewActivity.this).inflate(R.layout.activity_lock_screen, null));
-        mLockScreeniManager.updateActivity(LockScreenViewActivity.this);
+
+        init();
 
        /* HomeKeyLocker homeKeyLoader = new HomeKeyLocker();
         homeKeyLoader.lock(this);*/
-
-        init();
 
     }
 
@@ -97,6 +93,12 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
     }
 
     private void init() {
+        setupView(R.layout.activity_lock_screen_view);
+        mLockScreeniManager = LockScreenManager.getInstance(LockScreenViewActivity.this); // 한개의 액티비티만 생성 되게 함 싱글톤 방식
+        mLockScreeniManager.setLockStatusListener(this);
+        mLockScreeniManager.setLockScreen(LayoutInflater.from(LockScreenViewActivity.this).inflate(R.layout.activity_lock_screen, null));
+        mLockScreeniManager.updateActivity(LockScreenViewActivity.this);
+
         mLockScreenViewActivity = this;
     }
 

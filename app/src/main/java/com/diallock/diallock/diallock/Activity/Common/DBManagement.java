@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by park on 2016-09-12.
  */
-public class DBManageMent {
+public class DBManagement {
 
     private static final String TAG = "DBManageMent";
     public static final String SI = "si";
@@ -58,11 +58,11 @@ public class DBManageMent {
         }
     }
 
-    public DBManageMent(Context context) {
+    public DBManagement(Context context) {
         this.mContext = context;
     }
 
-    public DBManageMent open() throws SQLException {
+    public DBManagement open() throws SQLException {
         mDbHelper = new DatabaseHelper(mContext);
         mDb = mDbHelper.getWritableDatabase();
         return this;

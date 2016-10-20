@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
-import com.diallock.diallock.diallock.Activity.Common.DBManageMent;
+import com.diallock.diallock.diallock.Activity.Common.DBManagement;
 import com.diallock.diallock.diallock.Activity.taskAction.ScreenService;
 import com.diallock.diallock.diallock.R;
 
@@ -40,7 +40,7 @@ public class SettingActivity extends AppCompatActivity {
     final int REQ_CODE_SELECT_IMAGE = 100;
     private final static int PERMISSIONS_REQ_NUM = 6242;
 
-    private DBManageMent dbManageMent;
+    private DBManagement dbManageMent;
 
 
     @Override
@@ -194,7 +194,8 @@ public class SettingActivity extends AppCompatActivity {
                         linear_lock.setBackgroundResource(R.drawable.btn_click);
                         linear_unlock.setBackgroundResource(R.drawable.btn_bg);
 
-                        Intent intentLockScreen = new Intent(SettingActivity.this, LockScreenActivity.class);
+                        //Intent intentLockScreen = new Intent(SettingActivity.this, LockScreenActivity.class);
+                        Intent intentLockScreen = new Intent(SettingActivity.this, LockScreenViewActivity.class);
                         intentLockScreen.putExtra("strSwitch", "SettingActivity");
                         startActivity(intentLockScreen);
                         //lockCheck = true;
@@ -430,7 +431,7 @@ public class SettingActivity extends AppCompatActivity {
      */
     private void copyExcelDataToDatabase() {
 
-        dbManageMent = new DBManageMent(SettingActivity.this);
+        dbManageMent = new DBManagement(SettingActivity.this);
         dbManageMent.delete();
 
         CommonJava.Loging.i("CustomKey", "copyExcelDataToDatabase()");

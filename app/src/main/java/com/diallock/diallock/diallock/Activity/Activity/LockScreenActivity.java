@@ -15,10 +15,9 @@ import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Adapter.ListViewAdapter;
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
-import com.diallock.diallock.diallock.Activity.Common.DBManageMent;
+import com.diallock.diallock.diallock.Activity.Common.DBManagement;
 import com.diallock.diallock.diallock.Activity.Common.FestivalInfo;
 import com.diallock.diallock.diallock.Activity.Common.GMailSender;
-import com.diallock.diallock.diallock.Activity.Fragment.CircleDial;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
 
@@ -281,7 +280,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
     protected void onDestroy() {
 
-       // mTimer.cancel();
+        // mTimer.cancel();
 
         super.onDestroy();
 
@@ -292,7 +291,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
     protected void onPause() {
 
-       // mTimer.cancel();
+        // mTimer.cancel();
 
         super.onPause();
 
@@ -348,7 +347,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
         ArrayList<FestivalInfo> festivalInfos = null;
 
-        DBManageMent dbManageMent = new DBManageMent(LockScreenActivity.this);
+        DBManagement dbManageMent = new DBManagement(LockScreenActivity.this);
         dbManageMent.open();
 
         festivalInfos = dbManageMent.serchDay(strDate);
