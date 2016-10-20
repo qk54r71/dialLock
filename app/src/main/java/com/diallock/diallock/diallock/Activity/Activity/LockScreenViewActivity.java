@@ -26,6 +26,7 @@ import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
 import com.diallock.diallock.diallock.Activity.taskAction.ScreenReceiver;
 import com.diallock.diallock.diallock.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -78,6 +79,7 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
         CommonJava.Loging.i("LockScreenViewActivity", "onCreate()");
 
 
+        Fresco.initialize(LockScreenViewActivity.this);
         setupView(R.layout.activity_lock_screen_view);
 
         init();
@@ -120,7 +122,6 @@ public class LockScreenViewActivity extends BaseActivity implements LockScreenMa
     }
 
     @Override
-
     protected void onDestroy() {
         mLockScreeniManager.unLock();
         mLockScreeniManager.updateActivity(LockScreenViewActivity.this);

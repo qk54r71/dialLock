@@ -17,6 +17,7 @@ import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Common.DBManagement;
 import com.diallock.diallock.diallock.Activity.taskAction.ScreenService;
 import com.diallock.diallock.diallock.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,8 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Fresco.initialize(SettingActivity.this);
         setContentView(R.layout.activity_setting);
 
         Boolean isAuthorityCheck = isAuthorityCheck();

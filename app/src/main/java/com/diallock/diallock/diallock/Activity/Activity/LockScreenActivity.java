@@ -20,6 +20,7 @@ import com.diallock.diallock.diallock.Activity.Common.FestivalInfo;
 import com.diallock.diallock.diallock.Activity.Common.GMailSender;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,6 +61,8 @@ public class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Fresco.initialize(LockScreenActivity.this);
         setContentView(R.layout.activity_lock_screen);
         CommonJava.Loging.i("LockScreenActivity", "onCreate()");
 

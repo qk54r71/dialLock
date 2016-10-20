@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 public class EmailChangeActivity extends AppCompatActivity {
 
@@ -25,6 +26,8 @@ public class EmailChangeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Fresco.initialize(EmailChangeActivity.this);
         setContentView(R.layout.activity_email_change);
 
         setFindView();

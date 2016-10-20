@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical"
-    tools:context="com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity"
-    android:background="#FFFFFF">
+    tools:context="com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,102 +15,102 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:gravity="center">
+            android:paddingRight="20dp">
 
-            <Button
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/lock_screen_menu"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:id="@+id/lock_screen_menu"
                 android:background="@drawable/menu" />
 
             <TextView
                 android:id="@+id/txt_lock_title"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:textColor="#000000"
-                android:textSize="20dp"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_weight="1" />
+                android:textColor="#000000"
+                android:textSize="20dp" />
 
-            <Button
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/lock_screen_setting"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:id="@+id/lock_screen_setting"
-                android:background="@drawable/settings" />
+                android:background="@drawable/use" />
 
             <TextView
                 android:id="@+id/txt_lock_time"
                 android:layout_width="match_parent"
                 android:layout_height="76dp"
+                android:gravity="center"
                 android:textColor="#000000"
                 android:textSize="25dp"
-                android:gravity="center"
                 android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#e0e0e0"></LinearLayout>
+            android:background="#e0e0e0"
+            android:orientation="vertical"></LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:gravity="center"
+            android:orientation="horizontal"
             android:paddingLeft="20dp"
             android:paddingRight="20dp">
 
-            <Button
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/lock_screen_pre"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:id="@+id/lock_screen_pre"
                 android:background="@drawable/previous" />
 
             <TextView
                 android:id="@+id/txt_lock_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#000000"
-                android:textSize="20dp"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_weight="1" />
+                android:textColor="#000000"
+                android:textSize="20dp" />
 
-            <Button
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/lock_screen_nex"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:id="@+id/lock_screen_nex"
                 android:background="@drawable/next" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#e0e0e0"></LinearLayout>
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/lock_screen_listview" />
-
-        <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#e0e0e0"
-            android:layout_marginTop="-1dp" />
+            android:orientation="vertical"></LinearLayout>
+
+        <ListView
+            android:id="@+id/lock_screen_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="-1dp"
+            android:background="#e0e0e0"
+            android:orientation="vertical" />
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -117,17 +118,60 @@
         android:orientation="vertical">
 
         <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:id="@+id/fragment"
             android:name="com.diallock.diallock.diallock.Activity.Fragment.CircleDial"
-            android:id="@+id/fragment" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:layout_marginTop="-70dp">
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
 
-            <Button
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/btn_pre_circle"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/btn_pre_circle" />
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/btn_next_circle"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="right"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_next_circle" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true">
+
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/btn_dial_number"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/btn_num_1" />
+
+            <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/btn_find_pass"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -135,12 +179,13 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_gravity="right"
-                android:background="@drawable/password_find"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                android:background="@drawable/password_find" />
 
         </RelativeLayout>
-    </LinearLayout>
+
+    </RelativeLayout>
 
 
 </LinearLayout>

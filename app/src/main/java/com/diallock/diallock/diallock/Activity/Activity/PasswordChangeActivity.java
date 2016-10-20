@@ -16,6 +16,7 @@ import com.diallock.diallock.diallock.Activity.Common.CommonJava;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayoutPassword;
 import com.diallock.diallock.diallock.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 public class PasswordChangeActivity extends AppCompatActivity {
 
@@ -32,6 +33,8 @@ public class PasswordChangeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Fresco.initialize(PasswordChangeActivity.this);
         setContentView(R.layout.activity_password_change);
 
         CommonJava.Loging.i(getLocalClassName(), "onCreate()");

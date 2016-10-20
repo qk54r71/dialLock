@@ -18,6 +18,7 @@ import com.diallock.diallock.diallock.Activity.Adapter.ListViewAdapter;
 import com.diallock.diallock.diallock.Activity.Layout.CircleLayout;
 import com.diallock.diallock.diallock.Activity.taskAction.NoLockStatusListenerException;
 import com.diallock.diallock.diallock.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -40,7 +41,7 @@ public class LockScreenManager {
     private boolean mIsLock;
     private WeakReference<WindowManager> mWindowManagerRef;
     private CircleLayout circleLayout;
-    private Button btn_cancle;
+    private SimpleDraweeView btn_cancle;
     private Timer mTimer;
     private Handler mHandler = new Handler();
     private LockStatusListener lockStatusListener;
@@ -50,10 +51,10 @@ public class LockScreenManager {
     private TextView txt_lock_time;
     private TextView txt_lock_title;
     private ListView lock_screen_listview;
-    private Button lock_screen_pre;
-    private Button lock_screen_nex;
+    private SimpleDraweeView lock_screen_pre;
+    private SimpleDraweeView lock_screen_nex;
     private Calendar mCalendar;
-    private Button btn_find_pass;
+    private SimpleDraweeView btn_find_pass;
     private Date mNowDate;
 
     private final String LOG_NAME = "LockScreenManager";
@@ -159,11 +160,11 @@ public class LockScreenManager {
 
     private void setFIndView() {
 
-        btn_find_pass = (Button) mLockView.findViewById(R.id.btn_find_pass);
+        btn_find_pass = (SimpleDraweeView) mLockView.findViewById(R.id.btn_find_pass);
         txt_lock_day = (TextView) mLockView.findViewById(R.id.txt_lock_day);
         txt_lock_time = (TextView) mLockView.findViewById(R.id.txt_lock_time);
-        lock_screen_pre = (Button) mLockView.findViewById(R.id.lock_screen_pre);
-        lock_screen_nex = (Button) mLockView.findViewById(R.id.lock_screen_nex);
+        lock_screen_pre = (SimpleDraweeView) mLockView.findViewById(R.id.lock_screen_pre);
+        lock_screen_nex = (SimpleDraweeView) mLockView.findViewById(R.id.lock_screen_nex);
         lock_screen_listview = (ListView) mLockView.findViewById(R.id.lock_screen_listview);
         txt_lock_title = (TextView) mLockView.findViewById(R.id.txt_lock_title);
     }
@@ -415,5 +416,7 @@ public class LockScreenManager {
 
         txt_lock_day.setText(strTxtLockDay);
     }
+
+
 
 }
