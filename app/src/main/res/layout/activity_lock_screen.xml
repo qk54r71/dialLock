@@ -8,11 +8,20 @@
     android:orientation="vertical"
     tools:context="com.diallock.diallock.diallock.Activity.Activity.LockScreenActivity">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/DialCate"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:visibility="gone"></RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/DialInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,10 +105,10 @@
             android:background="#e0e0e0"
             android:orientation="vertical"></LinearLayout>
 
-        <ListView
-            android:id="@+id/lock_screen_listview"
+        <com.diallock.diallock.diallock.Activity.Layout.ViewPager.HorizontalViewPager
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:id="@+id/customViewInfo" />
 
         <LinearLayout
             android:layout_width="match_parent"
